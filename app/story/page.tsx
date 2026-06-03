@@ -3,7 +3,10 @@ import Image from 'next/image';
 import SectionTitle from '@/components/SectionTitle';
 import { images, story } from '@/lib/content';
 
-export const metadata: Metadata = { title:'قصتنا', description:'قصة ليل وخبرة أكثر من 20 عاماً في صناعة الملابس النسائية.' };
+export const metadata: Metadata = {
+  title:'قصتنا',
+  description:'قصة ليل وخبرة أكثر من 20 عاماً في صناعة الملابس النسائية واللانجيري الراقي بروح الفستان.'
+};
 
 const milestones = [
   {year:'2004', title:'بداية ندى', text:'بدأت الرحلة بخبرة حقيقية في صناعة الملابس النسائية مع وضع الجودة ورضا العملاء في المقدمة.'},
@@ -20,10 +23,16 @@ export default function Story(){
           <SectionTitle kicker="قصتنا" title="من ندى إلى ليل" text="رحلة خبرة طويلة ورؤية حديثة في صناعة الملابس النسائية واللانجيري المصمم بروح الفستان الراقي." />
           <div className="storyText">{story}</div>
         </div>
-        <div className="luxuryCollage" aria-label="صور من مصنع ليل">
-          <Image className="collageMain" src={images.atelier} alt="داخل مصنع ليل" width={760} height={900} priority />
-          <Image className="collageSmall collageTop" src={images.patternDress} alt="تصميمات وباترون ليل" width={360} height={280} />
-          <Image className="collageSmall collageBottom" src={images.scissors} alt="مقص ليل وجودة القص" width={360} height={280} />
+
+        <div className="storyGallery" aria-label="صور من مصنع ليل">
+          <div className="storyMainImage">
+            <Image src={images.hero} alt="داخل مصنع ليل وخطوط الإنتاج" width={900} height={980} priority />
+          </div>
+          <div className="storySideImages">
+            <div className="sideCard"><Image src={images.atelier} alt="مانيكان وتصميمات ليل" width={420} height={300} /></div>
+            <div className="sideCard"><Image src={images.patternDress} alt="باترون وتصميم لانجيري ليل" width={420} height={300} /></div>
+            <div className="sideCard"><Image src={images.scissors} alt="مقصات ليل ودقة القص" width={420} height={300} /></div>
+          </div>
         </div>
       </div>
     </section>

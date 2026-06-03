@@ -1,10 +1,9 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import SocialIcons from '@/components/SocialIcons';
 import SectionTitle from '@/components/SectionTitle';
 import ProductCard from '@/components/ProductCard';
 import JsonLd from '@/components/JsonLd';
-import { brand, images, products, catalogIntro, processSteps, b2bFeatures } from '@/lib/content';
+import { brand, images, products, catalogIntro, processSteps, b2bFeatures, siteUrl } from '@/lib/content';
 
 export default function Home(){
   return <main>
@@ -16,18 +15,17 @@ export default function Home(){
       <div className="container heroVideoContent">
         <div className="heroTextPanel">
           <span className="eyebrow">نصنع الأناقة منذ أكثر من 20 عاماً</span>
-          <h1>أناقة عالمية تصنع بخبرة مصرية</h1>
-          <p className="heroLead">أناقة عالمية، جودة موثوقة، وأسعار تنافسية تجعل ليل خيارك الأول.</p>
-          <p className="heroBody">في ليل، نؤمن أن الجودة الحقيقية تبدأ من التفاصيل. بخبرة تمتد لأكثر من عقدين في صناعة الملابس النسائية، نقدم منتجات تجمع بين الجودة العالية والتصميم العصري والأسعار التنافسية.</p>
+          <h1>مصنع ليل لتصنيع وتوريد اللانجيري الراقي بروح الفستان</h1>
+          <p className="heroLead">أناقة عالمية، جودة موثوقة، وأسعار تنافسية تجعل ليل خيارك الأول للتوريد التجاري.</p>
+          <p className="heroBody">في ليل، نؤمن أن الجودة الحقيقية تبدأ من التفاصيل. بخبرة تمتد لأكثر من عقدين في صناعة الملابس النسائية، نقدم منتجات تجمع بين الجودة العالية والتصميم العصري والأسعار التنافسية للمتاجر وتجار الجملة داخل وخارج مصر.</p>
           <div className="heroActions">
             <Link className="btn btn-gold" href="/b2b">طلب عرض توريد</Link>
             <Link className="btn btn-outline" href="/catalog">تصفح الكتالوج</Link>
           </div>
-          <div style={{marginTop:28}}><SocialIcons/></div>
           <div className="stats">
             <div className="stat"><b>20+</b><small>سنة خبرة</small></div>
             <div className="stat"><b>200%+</b><small>زيادة الطاقة التشغيلية</small></div>
-            <div className="stat"><b>توريد</b><small>للمتاجر وتجار الجملة</small></div>
+            <div className="stat"><b>B2B</b><small>توريد للمتاجر والموزعين</small></div>
           </div>
         </div>
       </div>
@@ -73,6 +71,6 @@ export default function Home(){
         <Link className="btn btn-gold" href="/b2b">طلب عرض توريد</Link>
       </div>
     </section>
-    <JsonLd data={{'@context':'https://schema.org','@type':'WebSite',name:'ليل',url:'/'}} />
+    <JsonLd data={{'@context':'https://schema.org','@type':'WebSite',name:'ليل',url:siteUrl,potentialAction:{'@type':'SearchAction',target:`${siteUrl}/catalog?search={search_term_string}`,'query-input':'required name=search_term_string'}}} />
   </main>
 }

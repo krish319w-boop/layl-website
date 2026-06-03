@@ -1,8 +1,8 @@
-# Layl Premium Website
+# Layl Premium B2B Website
 
-موقع عربي RTL لبراند **ليل** موجه للتوريد التجاري والكتالوج، مبني بـ Next.js ومجهز للنشر على Vercel مع Firebase للـ Admin والمنتجات.
+موقع Next.js عربي RTL لبراند ليل، مخصص للتوريد B2B للمتاجر وتجار الجملة.
 
-## تشغيل المشروع
+## التشغيل المحلي
 
 ```bash
 npm install
@@ -10,31 +10,38 @@ cp .env.example .env.local
 npm run dev
 ```
 
-## مكان فيديو الهيرو
+ضع فيديو الهيرو هنا:
 
-ضع الفيديو بصيغة MP4 داخل:
-
-```bash
+```text
 public/videos/hero.mp4
 ```
 
-لا تغير الاسم. الكود جاهز يقرأ الفيديو من هذا المسار:
+## النشر على Vercel
 
-```html
-/videos/hero.mp4
+أضف Environment Variables التالية في Vercel على Production and Preview:
+
+```env
+NEXT_PUBLIC_FIREBASE_API_KEY=
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
+NEXT_PUBLIC_FIREBASE_APP_ID=
+NEXT_PUBLIC_WHATSAPP_NUMBER=
+NEXT_PUBLIC_SITE_URL=
+NEXT_PUBLIC_FACEBOOK_URL=
+NEXT_PUBLIC_INSTAGRAM_URL=
+NEXT_PUBLIC_TELEGRAM_URL=
+NEXT_PUBLIC_LINKEDIN_URL=
+NEXT_PUBLIC_META_PIXEL_ID=
+NEXT_PUBLIC_TIKTOK_PIXEL_ID=
 ```
 
-لو الفيديو 28MB عادي، اتركه كما هو. فقط تأكد أن اسمه `hero.mp4`.
+## التعديلات المضافة
 
-## النشر
-
-- الواجهة والموقع: Vercel
-- قاعدة البيانات/الصور/الأدمن: Firebase
-- فيديو الهيرو الأساسي: داخل المشروع في public/videos وليس Firebase
-
-## ملاحظات التعديل النهائي
-
-- تم حذف عبارة Premium B2B Fashion من الهيدر والهيرو.
-- تم تحويل الهيرو إلى فيديو full screen.
-- تم إعادة تصميم صفحة قصتنا بشكل Editorial Luxury Collage + Timeline.
-- تم الحفاظ على النصوص الأساسية.
+- إزالة زوم فيديو الهيرو باستخدام `object-fit: contain`.
+- إعادة تصميم صفحة قصتنا بتوزيع صور Premium مناسب لمصنع B2B.
+- حذف النص الصغير أسفل اللوجو من الهيدر.
+- تحسين SEO الأساسي و Open Graph و Twitter Card.
+- إضافة Meta Pixel و TikTok Pixel من خلال Environment Variables.
+- الحفاظ على Firebase كـ backend للـ Admin والبيانات.

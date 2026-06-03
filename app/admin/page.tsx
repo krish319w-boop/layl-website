@@ -11,6 +11,7 @@ export default function Admin(){
 
   async function saveProduct(){
     try{
+      if(!db){ setStatus('Firebase غير مفعّل. أضف Environment Variables أولاً.'); return; }
       setStatus('جارِ الحفظ...');
       await addDoc(collection(db,'products'),{
         name, code, minOrder:Number(minOrder),
@@ -25,6 +26,7 @@ export default function Admin(){
 
   async function saveInquiry(){
     try{
+      if(!db){ setStatus('Firebase غير مفعّل. أضف Environment Variables أولاً.'); return; }
       setStatus('جارِ حفظ طلب توريد تجريبي...');
       await addDoc(collection(db,'b2b_inquiries'),{company:'شركة تجريبية', quantity:100, status:'new', createdAt:serverTimestamp()});
       setStatus('تم حفظ طلب توريد تجريبي.');

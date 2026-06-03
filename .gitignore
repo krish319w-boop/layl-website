@@ -1,8 +1,8 @@
-node_modules
-.next
+node_modules/
+.next/
 .env
 .env.local
-.vercel
-out
-dist
-build
+.vercel/
+out/
+dist/
+build/
