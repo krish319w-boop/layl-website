@@ -44,16 +44,6 @@ export default function Story() {
           />
 
           <div className="storyPremiumCard">
-            <div className="storyPremiumImage">
-              <Image
-                src="/images/story-factory.webp"
-                alt="مصنع ليل وخطوط إنتاج اللانجيري الراقي"
-                width={1200}
-                height={1400}
-                priority
-              />
-            </div>
-
             <div className="storyPremiumContent">
               <span className="storyBadge">رحلتنا</span>
 
@@ -77,6 +67,16 @@ export default function Story() {
                   <span>توريد للجملة والمتاجر</span>
                 </div>
               </div>
+            </div>
+
+            <div className="storyPremiumImage">
+              <Image
+                src="/images/story-factory.webp"
+                alt="مصنع ليل وخطوط إنتاج اللانجيري الراقي"
+                width={1200}
+                height={1600}
+                priority
+              />
             </div>
           </div>
         </div>
@@ -142,44 +142,19 @@ export default function Story() {
         .storyPremiumCard {
           margin-top: 34px;
           display: grid;
-          grid-template-columns: 58% 42%;
+          grid-template-columns: 42% 58%;
           gap: 0;
           align-items: stretch;
           border: 1px solid rgba(212, 163, 115, 0.28);
           border-radius: 36px;
           overflow: hidden;
           background:
-            radial-gradient(circle at 78% 18%, rgba(212,163,115,.12), transparent 32%),
+            radial-gradient(circle at 25% 20%, rgba(212,163,115,.12), transparent 32%),
             linear-gradient(135deg, rgba(255,255,255,.035), rgba(255,255,255,.012)),
             #0a0908;
           box-shadow:
             0 28px 90px rgba(0,0,0,.50),
             inset 0 0 0 1px rgba(255,255,255,.035);
-        }
-
-        .storyPremiumImage {
-          position: relative;
-          min-height: 750px;
-          overflow: hidden;
-          background: #090706;
-        }
-
-        .storyPremiumImage img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          object-position: center;
-          display: block;
-        }
-
-        .storyPremiumImage::after {
-          content: "";
-          position: absolute;
-          inset: 0;
-          background:
-            linear-gradient(90deg, rgba(0,0,0,.10), rgba(0,0,0,.30) 100%),
-            linear-gradient(0deg, rgba(0,0,0,.36), transparent 45%);
-          pointer-events: none;
         }
 
         .storyPremiumContent {
@@ -191,7 +166,39 @@ export default function Story() {
           flex-direction: column;
           justify-content: center;
           text-align: right;
-          border-right: 1px solid rgba(212, 163, 115, 0.16);
+          border-left: 1px solid rgba(212, 163, 115, 0.16);
+        }
+
+        .storyPremiumImage {
+          position: relative;
+          min-height: 820px;
+          overflow: hidden;
+          background: #0a0908;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 24px;
+        }
+
+        .storyPremiumImage img {
+          width: 100%;
+          height: auto;
+          max-height: 780px;
+          object-fit: contain;
+          object-position: center;
+          display: block;
+          border-radius: 28px;
+          box-shadow: 0 20px 70px rgba(0,0,0,.45);
+        }
+
+        .storyPremiumImage::after {
+          content: "";
+          position: absolute;
+          inset: 0;
+          background:
+            linear-gradient(0deg, rgba(0,0,0,.22), transparent 35%),
+            linear-gradient(90deg, rgba(0,0,0,.18), transparent 45%);
+          pointer-events: none;
         }
 
         .storyBadge {
@@ -264,14 +271,21 @@ export default function Story() {
             grid-template-columns: 1fr;
           }
 
-          .storyPremiumImage {
-            min-height: 560px;
+          .storyPremiumContent {
+            order: 2;
+            padding: 34px 24px;
+            border-left: 0;
+            border-top: 1px solid rgba(212, 163, 115, 0.16);
           }
 
-          .storyPremiumContent {
-            padding: 34px 24px;
-            border-right: 0;
-            border-top: 1px solid rgba(212, 163, 115, 0.16);
+          .storyPremiumImage {
+            order: 1;
+            min-height: auto;
+            padding: 16px;
+          }
+
+          .storyPremiumImage img {
+            max-height: none;
           }
 
           .premiumStoryText {
@@ -285,7 +299,11 @@ export default function Story() {
           }
 
           .storyPremiumImage {
-            min-height: 420px;
+            padding: 10px;
+          }
+
+          .storyPremiumImage img {
+            border-radius: 20px;
           }
 
           .storyTrustGrid {
