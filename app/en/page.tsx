@@ -1,9 +1,8 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
-import ProductCard from '@/components/ProductCard';
 import SocialIcons from '@/components/SocialIcons';
-import { brand, en, images, products, siteUrl } from '@/lib/content';
+import { en, images, products, siteUrl } from '@/lib/content';
 
 export const metadata: Metadata = {
   title: 'Layl | Premium B2B Lingerie & Feminine Wear Manufacturer',
@@ -24,7 +23,7 @@ export default function EnglishHome(){
           <h1>{en.heroTitle}</h1>
           <p className="heroLead">{en.heroLead}</p>
           <p className="heroBody">{en.heroBody}</p>
-          <div className="heroActions"><Link className="btn btn-gold" href="/b2b">{en.cta}</Link><Link className="btn btn-outline" href="/catalog">{en.browse}</Link></div>
+          <div className="heroActions"><Link className="btn btn-gold" href="/en/b2b">{en.cta}</Link><Link className="btn btn-outline" href="/en/catalog">{en.browse}</Link></div>
           <div className="stats"><div className="stat"><b>20+</b><small>Years Experience</small></div><div className="stat"><b>200%+</b><small>Production Growth</small></div><div className="stat"><b>GCC</b><small>Export Ready</small></div></div>
         </div>
       </div>
@@ -34,7 +33,7 @@ export default function EnglishHome(){
       <div className="feature card hoverLift"><div className="featureIcon">02</div><h3>B2B supply ready</h3><p>Wholesale solutions for boutiques, retailers, distributors, and private orders.</p></div>
       <div className="feature card hoverLift"><div className="featureIcon">03</div><h3>Egypt & Gulf markets</h3><p>SEO and content prepared for Egypt, Saudi Arabia, UAE, Kuwait, Qatar, Bahrain, and Oman.</p></div>
     </div></section>
-    <section className="section"><div className="container split"><div className="imagePanel"><Image src={images.cutter} alt="Layl production and cutting stage" width={850} height={650}/></div><div><span className="eyebrow">B2B MANUFACTURING</span><h2>Reliable supply partner for retailers</h2><p className="heroLead">{brand.b2bLine}</p><SocialIcons /></div></div></section>
-    <section className="section"><div className="container"><span className="eyebrow">CATALOG</span><h2>Featured Layl products</h2><div className="grid3">{products.map(p=><ProductCard key={p.slug} product={p}/>)}</div></div></section>
+    <section className="section"><div className="container split"><div className="imagePanel"><Image src={images.cutter} alt="Layl production and cutting stage" width={850} height={650}/></div><div><span className="eyebrow">B2B MANUFACTURING</span><h2>Reliable supply partner for retailers</h2><p className="heroLead">B2B manufacturing and supply solutions for retailers, wholesalers, boutiques, and distributors across Egypt and the Gulf.</p><SocialIcons /></div></div></section>
+    <section className="section"><div className="container"><span className="eyebrow">CATALOG</span><h2>Featured Layl products</h2><div className="grid3">{products.map(p=><article className="productCard card hoverLift" key={p.slug}><Link href={`/en/catalog`}><Image src={p.image} alt={`Layl B2B product ${p.code}`} width={700} height={520}/><div className="productBody"><span className="eyebrow">{p.code} • B2B Supply</span><h3>{p.code === 'L01' ? 'Layl Royal Blue Dress' : p.code === 'L02' ? 'Layl Teal Dress' : 'Layl Premium Black Dress'}</h3><p>Premium feminine wear design available for wholesale supply in Egypt and GCC markets.</p><div className="chips">{p.sizes.map(s=><span key={s}>{s}</span>)}</div></div></Link></article>)}</div></div></section>
   </main>
 }
