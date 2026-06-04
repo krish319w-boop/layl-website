@@ -37,18 +37,17 @@ export const story = `بدأت رحلتنا منذ أكثر من 20 عاماً �
 export const catalogIntro = 'تصفحي أحدث الموديلات والتصاميم العصرية المصنوعة بخامات مختارة بعناية، مع تشكيلة متنوعة من الألوان والمقاسات التي تناسب جميع الأذواق. من القطع اليومية إلى الموديلات المميزة، ستجدين ما يعكس أناقتك وثقتك في كل مناسبة.';
 
 export const images = {
-  hero: '/images/#U0645#U0646 #U062f#U0627#U062e#U0644 #U0627#U0644#U0645#U0635#U0646#U0639.png',
-  atelier: '/images/#U0645#U0627#U0646#U0643#U0627#U0646.png',
-  designs: '/images/#U0645#U0648#U062f#U064a#U0644#U0627#U062a.png',
-  designs2: '/images/#U0645#U0648#U062f#U0633#U064a#U0644#U0627#U062a 2.png',
-  sketches: '/images/#U062a#U0645#U0635#U0645#U064a#U0627#U062a #U0644#U064a#U0644.png',
-  patternDress: '/images/#U0628#U062a#U0631#U0648#U0646 #U062f#U0631#U064a#U0633.png',
-  pattern: '/images/#U0628#U062a#U0631#U0648#U0646.png',
-  cutter: '/images/#U0645#U0642#U0635 #U062f#U0627#U0631.png',
-  scissors: '/images/#U0645#U0642#U0635 #U0644#U064a#U0644.png',
-  logo: '/images/WhatsApp Image 2026-06-02 at 6.47.55 PM(4).jpeg'
+  hero: '/images/factory-inside.png',
+  atelier: '/images/mannequin.png',
+  designs: '/images/models-1.png',
+  designs2: '/images/models-2.png',
+  sketches: '/images/layl-designs.png',
+  patternDress: '/images/dress-pattern.png',
+  pattern: '/images/pattern.png',
+  cutter: '/images/cutting-machine.png',
+  scissors: '/images/layl-scissors.png',
+  logo: '/images/logo.jpeg'
 };
-
 export const products = [
   { slug:'l01-royal-blue', code:'L01', name:'فستان ليل الأزرق الملكي', image:images.designs, gallery:[images.designs, images.sketches, images.patternDress], sizes:['M','L','XL','2XL'], price:'تواصل للطلب', category:'مجموعة مميزة', stock:true, minOrder: 12, colors: ['أزرق ملكي','أسود','نبيتي'], description:'موديل راقٍ مناسب للتوريد التجاري، مصمم بخامات ناعمة وقصّة أنيقة تناسب المتاجر والبوتيكات.' },
   { slug:'l02-teal', code:'L02', name:'فستان ليل التركواز', image:images.designs2, gallery:[images.designs2, images.pattern, images.atelier], sizes:['M','L','XL','2XL'], price:'تواصل للطلب', category:'مجموعة عصرية', stock:true, minOrder: 12, colors: ['تركواز','أسود','ذهبي'], description:'تصميم عصري بخامة مريحة وتشطيب Premium، متاح للتعاقدات وتوريد الكميات حسب المقاسات المطلوبة.' },
