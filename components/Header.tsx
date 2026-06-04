@@ -35,10 +35,8 @@ export default function Header() {
   }, [pathname]);
 
   useEffect(() => {
-    document.body.style.overflow = isOpen ? 'hidden' : '';
-    return () => {
-      document.body.style.overflow = '';
-    };
+    document.body.classList.toggle('mobileMenuLocked', isOpen);
+    return () => document.body.classList.remove('mobileMenuLocked');
   }, [isOpen]);
 
   return (
@@ -71,7 +69,11 @@ export default function Header() {
         </nav>
 
         <div className="navActions">
-          <Link className="langSwitch" href={isEnglish ? '/' : '/en'} aria-label={isEnglish ? 'Switch to Arabic' : 'Switch to English'}>
+          <Link
+            className="langSwitch"
+            href={isEnglish ? '/' : '/en'}
+            aria-label={isEnglish ? 'Switch to Arabic' : 'Switch to English'}
+          >
             {isEnglish ? 'AR' : 'EN'}
           </Link>
 
@@ -80,7 +82,7 @@ export default function Header() {
           </Link>
 
           <button
-            className={`mobileMenuButton ${isOpen ? 'isOpen' : ''}`}
+            className={`mobileMenuButton${isOpen ? ' isOpen' : ''}`}
             type="button"
             aria-label={isEnglish ? 'Open menu' : 'فتح القائمة'}
             aria-expanded={isOpen}
@@ -93,13 +95,15 @@ export default function Header() {
         </div>
       </div>
 
-      <div
-        className={`mobileMenuOverlay ${isOpen ? 'isOpen' : ''}`}
+      <button
+        className={`mobileMenuOverlay${isOpen ? ' isOpen' : ''}`}
+        type="button"
+        aria-label={isEnglish ? 'Close menu overlay' : 'إغلاق القائمة'}
         onClick={() => setIsOpen(false)}
-        aria-hidden={!isOpen}
+        tabIndex={isOpen ? 0 : -1}
       />
 
-      <aside className={`mobileMenu ${isOpen ? 'isOpen' : ''}`} dir={isEnglish ? 'ltr' : 'rtl'}>
+      <aside className={`mobileMenu${isOpen ? ' isOpen' : ''}`} dir={isEnglish ? 'ltr' : 'rtl'} aria-hidden={!isOpen}>
         <div className="mobileMenuHead">
           <div className="brandMark">
             <Image
