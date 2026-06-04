@@ -5,14 +5,31 @@ import { images, story } from '@/lib/content';
 
 export const metadata: Metadata = {
   title: 'قصتنا',
-  description: 'قصة ليل وخبرة أكثر من 20 عاماً في صناعة الملابس النسائية واللانجيري الراقي بروح الفستان.'
+  description:
+    'قصة ليل وخبرة أكثر من 20 عاماً في صناعة الملابس النسائية واللانجيري الراقي بروح الفستان.',
 };
 
 const milestones = [
-  { year: '2004', title: 'بداية ندى', text: 'بدأت الرحلة بخبرة حقيقية في صناعة الملابس النسائية مع وضع الجودة ورضا العملاء في المقدمة.' },
-  { year: '2015', title: 'تطوير خطوط الإنتاج', text: 'توسعنا في القدرات الإنتاجية وتقنيات التصنيع لرفع جودة التشطيب وثبات المقاسات.' },
-  { year: '2020', title: '+200% طاقة تشغيلية', text: 'زيادة الطاقة التشغيلية لتلبية الطلب المتزايد والاستعداد للتوسع في الأسواق الخارجية.' },
-  { year: '2026', title: 'إطلاق ليل', text: 'ولادة علامة ليل كامتداد لخبرة طويلة ورؤية أكثر حداثة في عالم اللانجيري الفاخر.' },
+  {
+    year: '2004',
+    title: 'بداية ندى',
+    text: 'بدأت الرحلة بخبرة حقيقية في صناعة الملابس النسائية مع وضع الجودة ورضا العملاء في المقدمة.',
+  },
+  {
+    year: '2015',
+    title: 'تطوير خطوط الإنتاج',
+    text: 'توسعنا في القدرات الإنتاجية وتقنيات التصنيع لرفع جودة التشطيب وثبات المقاسات.',
+  },
+  {
+    year: '2020',
+    title: '+200% طاقة تشغيلية',
+    text: 'زيادة الطاقة التشغيلية لتلبية الطلب المتزايد والاستعداد للتوسع في الأسواق الخارجية.',
+  },
+  {
+    year: '2026',
+    title: 'إطلاق ليل',
+    text: 'ولادة علامة ليل كامتداد لخبرة طويلة ورؤية أكثر حداثة في عالم اللانجيري الفاخر.',
+  },
 ];
 
 export default function Story() {
@@ -31,8 +48,8 @@ export default function Story() {
               <Image
                 src="/images/story-factory.webp"
                 alt="مصنع ليل وخطوط إنتاج اللانجيري الراقي"
-                width={1100}
-                height={1300}
+                width={1200}
+                height={1400}
                 priority
               />
             </div>
@@ -40,7 +57,7 @@ export default function Story() {
             <div className="storyPremiumContent">
               <span className="storyBadge">رحلتنا</span>
 
-              <h2>من خبرة طويلة إلى علامة تلهم الأناقة</h2>
+              <h2>من ندى إلى ليل</h2>
 
               <div className="storyText premiumStoryText">{story}</div>
 
@@ -49,10 +66,12 @@ export default function Story() {
                   <strong>+20</strong>
                   <span>سنة خبرة</span>
                 </div>
+
                 <div className="storyTrustItem">
                   <strong>+200%</strong>
                   <span>نمو الطاقة الإنتاجية</span>
                 </div>
+
                 <div className="storyTrustItem">
                   <strong>B2B</strong>
                   <span>توريد للجملة والمتاجر</span>
@@ -70,6 +89,7 @@ export default function Story() {
             title="تاريخ يصنع الثقة"
             text="ترتيب واضح لقصة المصنع يعكس الخبرة والتطور والطاقة الإنتاجية المناسبة للتوريد التجاري."
           />
+
           <div className="milestoneGrid">
             {milestones.map((m) => (
               <div className="milestone card hoverLift" key={m.year}>
@@ -85,18 +105,29 @@ export default function Story() {
       <section className="section">
         <div className="container split">
           <div className="imagePanel">
-            <Image src={images.cutter} alt="ماكينة قص الأقمشة في مصنع ليل" width={850} height={650} />
+            <Image
+              src={images.cutter}
+              alt="ماكينة قص الأقمشة في مصنع ليل"
+              width={850}
+              height={650}
+            />
+
             <div className="panelCaption">
               <h3>تصنيع حقيقي قابل للتوسع</h3>
-              <p>نعتمد على خطوات إنتاج واضحة بداية من التصميم والباترون وحتى القص والتشطيب.</p>
+              <p>
+                نعتمد على خطوات إنتاج واضحة بداية من التصميم والباترون وحتى القص
+                والتشطيب.
+              </p>
             </div>
           </div>
+
           <div>
             <SectionTitle
               kicker="قوة المصنع"
               title="صور تعكس الثقة قبل المنتج"
               text="استخدام صور المكن والمقصات والخامات داخل صفحة قصتنا يعطي إحساس مصنع حقيقي مناسب للتجار والبوتيكات وشركات التوزيع."
             />
+
             <ul className="list">
               <li>خبرة أكثر من 20 عاماً في التصنيع.</li>
               <li>خامات تشمل التول، الليكرا، الزبدة، والشيفون.</li>
@@ -108,110 +139,162 @@ export default function Story() {
       </section>
 
       <style>{`
-        .storyPremiumCard{
+        .storyPremiumCard {
           margin-top: 34px;
           display: grid;
-          grid-template-columns: minmax(0, 1.15fr) minmax(360px, .85fr);
-          gap: 34px;
+          grid-template-columns: 58% 42%;
+          gap: 0;
           align-items: stretch;
-          padding: 18px;
-          border: 1px solid rgba(212,163,115,.34);
+          border: 1px solid rgba(212, 163, 115, 0.28);
           border-radius: 36px;
-          background: radial-gradient(circle at 80% 20%, rgba(212,163,115,.14), transparent 34%), linear-gradient(135deg, rgba(255,255,255,.035), rgba(255,255,255,.012));
-          box-shadow: 0 28px 90px rgba(0,0,0,.45), inset 0 0 0 1px rgba(255,255,255,.035);
           overflow: hidden;
+          background:
+            radial-gradient(circle at 78% 18%, rgba(212,163,115,.12), transparent 32%),
+            linear-gradient(135deg, rgba(255,255,255,.035), rgba(255,255,255,.012)),
+            #0a0908;
+          box-shadow:
+            0 28px 90px rgba(0,0,0,.50),
+            inset 0 0 0 1px rgba(255,255,255,.035);
         }
-        .storyPremiumImage{
+
+        .storyPremiumImage {
           position: relative;
+          min-height: 750px;
           overflow: hidden;
-          border-radius: 28px;
-          min-height: 640px;
           background: #090706;
         }
-        .storyPremiumImage img{
+
+        .storyPremiumImage img {
           width: 100%;
           height: 100%;
           object-fit: cover;
+          object-position: center;
           display: block;
         }
-        .storyPremiumImage::after{
+
+        .storyPremiumImage::after {
           content: "";
           position: absolute;
           inset: 0;
-          background: linear-gradient(90deg, transparent 58%, rgba(0,0,0,.42)), linear-gradient(0deg, rgba(0,0,0,.38), transparent 45%);
+          background:
+            linear-gradient(90deg, rgba(0,0,0,.10), rgba(0,0,0,.30) 100%),
+            linear-gradient(0deg, rgba(0,0,0,.36), transparent 45%);
           pointer-events: none;
         }
-        .storyPremiumContent{
-          padding: clamp(26px, 4vw, 56px);
+
+        .storyPremiumContent {
+          background:
+            radial-gradient(circle at 70% 20%, rgba(212,163,115,.10), transparent 28%),
+            #0a0908;
+          padding: clamp(34px, 4vw, 60px);
           display: flex;
           flex-direction: column;
           justify-content: center;
           text-align: right;
+          border-right: 1px solid rgba(212, 163, 115, 0.16);
         }
-        .storyBadge{
+
+        .storyBadge {
           width: fit-content;
-          color: #D4A373;
-          border: 1px solid rgba(212,163,115,.32);
-          background: rgba(212,163,115,.08);
+          color: #d4a373;
+          border: 1px solid rgba(212, 163, 115, 0.32);
+          background: rgba(212, 163, 115, 0.08);
           border-radius: 999px;
           padding: 8px 18px;
           font-size: 14px;
           margin-bottom: 22px;
         }
-        .storyPremiumContent h2{
+
+        .storyPremiumContent h2 {
           margin: 0 0 22px;
-          color: #F5EFE6;
-          font-size: clamp(34px, 4vw, 58px);
+          color: #f5efe6;
+          font-size: clamp(36px, 4vw, 58px);
           line-height: 1.22;
-          letter-spacing: -.04em;
+          letter-spacing: -0.04em;
         }
-        .premiumStoryText{
-          color: rgba(245,239,230,.76);
+
+        .premiumStoryText {
+          color: rgba(245, 239, 230, 0.76);
           line-height: 2.25;
           font-size: 16px;
           max-height: 430px;
           overflow: auto;
           padding-left: 10px;
         }
-        .premiumStoryText::-webkit-scrollbar{ width: 4px; }
-        .premiumStoryText::-webkit-scrollbar-thumb{
-          background: rgba(212,163,115,.45);
+
+        .premiumStoryText::-webkit-scrollbar {
+          width: 4px;
+        }
+
+        .premiumStoryText::-webkit-scrollbar-thumb {
+          background: rgba(212, 163, 115, 0.45);
           border-radius: 999px;
         }
-        .storyTrustGrid{
+
+        .storyTrustGrid {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
           gap: 14px;
           margin-top: 30px;
         }
-        .storyTrustItem{
-          border: 1px solid rgba(212,163,115,.22);
-          background: rgba(255,255,255,.035);
+
+        .storyTrustItem {
+          border: 1px solid rgba(212, 163, 115, 0.22);
+          background: rgba(255, 255, 255, 0.035);
           border-radius: 20px;
           padding: 18px 12px;
           text-align: center;
         }
-        .storyTrustItem strong{
+
+        .storyTrustItem strong {
           display: block;
-          color: #D4A373;
+          color: #d4a373;
           font-size: 28px;
           line-height: 1;
           margin-bottom: 8px;
         }
-        .storyTrustItem span{
-          color: rgba(245,239,230,.68);
+
+        .storyTrustItem span {
+          color: rgba(245, 239, 230, 0.68);
           font-size: 13px;
         }
-        @media (max-width: 1050px){
-          .storyPremiumCard{ grid-template-columns: 1fr; }
-          .storyPremiumImage{ min-height: 520px; }
-          .storyPremiumContent{ padding: 24px 10px 10px; }
-          .premiumStoryText{ max-height: none; }
+
+        @media (max-width: 1050px) {
+          .storyPremiumCard {
+            grid-template-columns: 1fr;
+          }
+
+          .storyPremiumImage {
+            min-height: 560px;
+          }
+
+          .storyPremiumContent {
+            padding: 34px 24px;
+            border-right: 0;
+            border-top: 1px solid rgba(212, 163, 115, 0.16);
+          }
+
+          .premiumStoryText {
+            max-height: none;
+          }
         }
-        @media (max-width: 640px){
-          .storyPremiumCard{ padding: 10px; border-radius: 26px; }
-          .storyPremiumImage{ min-height: 420px; border-radius: 20px; }
-          .storyTrustGrid{ grid-template-columns: 1fr; }
+
+        @media (max-width: 640px) {
+          .storyPremiumCard {
+            border-radius: 26px;
+          }
+
+          .storyPremiumImage {
+            min-height: 420px;
+          }
+
+          .storyTrustGrid {
+            grid-template-columns: 1fr;
+          }
+
+          .storyPremiumContent h2 {
+            font-size: 34px;
+          }
         }
       `}</style>
     </main>
