@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: { default: 'ليل | مصنع لانجيري راقي وتوريد B2B في مصر', template: '%s | ليل' },
   description: 'ليل — مصنع لانجيري وملابس نسائية راقية بروح الفستان للتوريد B2B. جودة موثوقة، تصميمات عصرية، وأسعار تنافسية للمتاجر وتجار الجملة داخل مصر وخارجها.',
-  keywords: ['مصنع لانجيري في مصر','لانجيري جملة','مصنع ملابس نسائية في القاهرة','توريد ملابس B2B','مصنع فساتين لانجيري','ليل Layl'],
+  keywords: ['مصنع لانجيري في مصر','لانجيري جملة','مصنع ملابس نسائية في القاهرة','توريد ملابس B2B','مصنع فساتين لانجيري','ليل Layl','توريد لانجيري للخليج','لانجيري جملة السعودية','مصنع ملابس نسائية للإمارات','تصدير ملابس نسائية للخليج'],
   applicationName: 'Layl',
   authors: [{ name: 'Layl' }],
   creator: 'Layl',
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     images:[{ url: images.hero, width: 1200, height: 630, alt: 'مصنع ليل للانجيري الراقي والتوريد التجاري' }]
   },
   twitter: { card: 'summary_large_image', title: 'ليل | مصنع لانجيري راقي وتوريد B2B', description: brand.heroSubtitle, images: [images.hero] },
-  alternates: { canonical: siteUrl },
+  alternates: { canonical: siteUrl, languages: { ar: siteUrl, en: `${siteUrl}/en`, 'x-default': siteUrl } },
   category: 'fashion manufacturing'
 };
 

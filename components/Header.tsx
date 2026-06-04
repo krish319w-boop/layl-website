@@ -14,7 +14,7 @@ export default function Header(){
         <span><b>ليل</b></span>
       </Link>
       <nav className="mainNav" aria-label="القائمة الرئيسية">{nav.map(([label,href])=><Link key={href} href={href}>{label}</Link>)}</nav>
-      <Link className="btn btn-gold navCta" href="/b2b">طلب عرض توريد</Link>
+      <div className="navActions"><Link className="langSwitch" href="/en">EN</Link><Link className="btn btn-gold navCta" href="/b2b">طلب عرض توريد</Link></div>
     </div>
   </header>
 }
