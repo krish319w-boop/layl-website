@@ -10,7 +10,7 @@ import MarketingPixels from '@/components/MarketingPixels';
 import { localBusinessSchema, organizationSchema } from '@/lib/seo';
 import { brand, siteUrl } from '@/lib/content';
 
-const ogImage = `${siteUrl}/og-image.jpg`;
+const ogImage = `${siteUrl}/og-image.png`;
 
 export const viewport: Viewport = {
   width: 'device-width',
