@@ -4,9 +4,9 @@ import SectionTitle from '@/components/SectionTitle';
 import { catalogIntro, products } from '@/lib/content';
 
 export const metadata = {
-  title: "كتالوج لانجيري وملابس نسائية جملة",
+  title: 'كتالوج لانجيري وملابس نسائية جملة',
   description:
-    "تصفح أحدث موديلات لانجيري وملابس نسائية من مصنع ليل للتوريد بالجملة داخل مصر والخليج."
+    'كتالوج مصنع ليل للانجيري والملابس النسائية بالجملة. موديلات عصرية للتوريد التجاري داخل مصر والخليج.',
 };
 export default function Catalog(){
   return <main className="section" style={{paddingTop:145}}>

@@ -4,10 +4,11 @@ import SectionTitle from '@/components/SectionTitle';
 import { brand, b2bFeatures, images } from '@/lib/content';
 
 export const metadata = {
-  title: "قصتنا | أكثر من 20 عاماً في التصنيع",
+  title: 'توريد لانجيري جملة | B2B Wholesale',
   description:
-    "تعرف على رحلة مصنع ليل وخبرتنا الممتدة لأكثر من 20 عاماً في صناعة الملابس النسائية واللانجيري."
+    'حلول توريد وتصنيع لانجيري وملابس نسائية بالجملة للمتاجر والبوتيكات داخل مصر والخليج.',
 };
+
 export default function B2B(){
   const msg = 'مرحبًا، أرغب في طلب عرض توريد B2B من ليل. برجاء التواصل لتحديد الموديلات والكميات والأسعار.';
   return <main className="section" style={{paddingTop:145}}>

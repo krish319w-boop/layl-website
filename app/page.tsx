@@ -1,3 +1,10 @@
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'مصنع لانجيري وملابس نسائية جملة في مصر',
+  description:
+    'ليل مصنع لانجيري وملابس نسائية جملة في مصر. توريد للمتاجر والبوتيكات وتجار الجملة داخل مصر والخليج بخبرة أكثر من 20 عاماً.',
+};
 import Image from 'next/image';
 import Link from 'next/link';
 import SectionTitle from '@/components/SectionTitle';
