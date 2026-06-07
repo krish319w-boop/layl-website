@@ -9,6 +9,14 @@ export default function robots(): MetadataRoute.Robots {
         allow: '/',
         disallow: ['/admin', '/admin/login', '/api/private'],
       },
+      {
+        userAgent: 'facebookexternalhit',
+        allow: '/',
+      },
+      {
+        userAgent: 'Facebot',
+        allow: '/',
+      },
     ],
     sitemap: `${siteUrl}/sitemap.xml`,
     host: siteUrl,
