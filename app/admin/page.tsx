@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import {
+  addDoc,
   collection,
   getDocs,
   orderBy,
@@ -147,14 +148,26 @@ export default function Admin() {
 
   async function loadProducts() {
     try {
-      if (!db) return;
+      const firestoreDb = db;
+      if (!firestoreDb) return;
 
-      const snapshot = await getDocs(query(collection(db, 'products'), orderBy('createdAt', 'desc')));
+      const snapshot = await getDocs(
+        query(collection(firestoreDb, 'products'), orderBy('createdAt', 'desc'))
+      );
 
       const rows = snapshot.docs.map((item) => {
         const data = item.data() as any;
-        const selectedSizes = (data.selectedSizes || Object.keys(data.sizes || {})) as SizeKey[];
-        const sizes = (data.sizes || {}) as ProductStock;
+
+        const selectedSizes = (data.selectedSizes ||
+          Object.keys(data.sizes || {})) as SizeKey[];
+
+        const sizes = {
+          M: Number(data?.sizes?.M || 0),
+          L: Number(data?.sizes?.L || 0),
+          XL: Number(data?.sizes?.XL || 0),
+          '2XL': Number(data?.sizes?.['2XL'] || 0),
+        } as ProductStock;
+
         const stock = calculateStock(sizes, selectedSizes);
 
         return {
@@ -167,14 +180,21 @@ export default function Admin() {
           price: data.price || 'تواصل للطلب',
           minOrder: Number(data.minOrder || 12),
           imageUrl: data.imageUrl || '/images/logo.jpeg',
-          gallery: Array.isArray(data.gallery) && data.gallery.length ? data.gallery : [data.imageUrl || '/images/logo.jpeg'],
+          gallery:
+            Array.isArray(data.gallery) && data.gallery.length
+              ? data.gallery
+              : [data.imageUrl || '/images/logo.jpeg'],
           videoUrl: data.videoUrl || '',
           selectedSizes,
-          selectedColors: Array.isArray(data.selectedColors) ? data.selectedColors : [],
+          selectedColors: Array.isArray(data.selectedColors)
+            ? data.selectedColors
+            : [],
           sizes,
           totalStock: Number(data.totalStock ?? stock.totalStock),
           stockStatus: data.stockStatus || stock.stockStatus,
-          lowStockSizes: Array.isArray(data.lowStockSizes) ? data.lowStockSizes : stock.lowStockSizes,
+          lowStockSizes: Array.isArray(data.lowStockSizes)
+            ? data.lowStockSizes
+            : stock.lowStockSizes,
           active: data.active !== false,
           seo: data.seo || {},
           createdAt: data.createdAt,
@@ -239,7 +259,7 @@ export default function Admin() {
       videoUrl: product.videoUrl || '',
       selectedSizes: product.selectedSizes || [],
       selectedColors: product.selectedColors || [],
-      sizes: product.sizes || {},
+      sizes: product.sizes || { M: 0, L: 0, XL: 0, '2XL': 0 },
       active: product.active !== false,
       seoTitle: product.seo?.title || '',
       seoDescription: product.seo?.description || '',
@@ -276,6 +296,7 @@ export default function Admin() {
       }
 
       const slug = form.slug.trim() || slugify(`${form.code}-${form.name}`);
+
       const gallery = form.galleryText
         .split('\n')
         .map((item) => item.trim())
@@ -306,7 +327,15 @@ export default function Admin() {
             form.seoDescription ||
             `${form.description} متاح للتوريد التجاري B2B من مصنع ليل.`,
         },
-        markets: ['Egypt', 'Saudi Arabia', 'UAE', 'Kuwait', 'Qatar', 'Bahrain', 'Oman'],
+        markets: [
+          'Egypt',
+          'Saudi Arabia',
+          'UAE',
+          'Kuwait',
+          'Qatar',
+          'Bahrain',
+          'Oman',
+        ],
       };
 
       setStatus(editingId ? 'جارِ تحديث المنتج...' : 'جارِ حفظ المنتج...');
@@ -343,20 +372,22 @@ export default function Admin() {
 
   async function saveInquiry() {
     try {
-      if (!db) {
+      const firestoreDb = db;
+
+      if (!firestoreDb) {
         setStatus('Firebase غير مفعّل. أضف Environment Variables أولاً.');
         return;
       }
 
-      await import('firebase/firestore').then(async ({ addDoc, collection }) => {
-        await addDoc(collection(db, 'orders'), {
-          company: 'شركة تجريبية',
-          country: 'GCC',
-          quantity: 100,
-          status: 'new',
-          source: 'website-admin-test',
-          createdAt: serverTimestamp(),
-        });
+      setStatus('جارِ حفظ طلب توريد تجريبي...');
+
+      await addDoc(collection(firestoreDb, 'orders'), {
+        company: 'شركة تجريبية',
+        country: 'GCC',
+        quantity: 100,
+        status: 'new',
+        source: 'website-admin-test',
+        createdAt: serverTimestamp(),
       });
 
       setStatus('تم حفظ طلب توريد تجريبي في Collection orders.');
@@ -388,11 +419,17 @@ export default function Admin() {
           }}
         >
           <div>
-            <h1 style={{ fontSize: 'clamp(38px,6vw,68px)', margin: '0 0 12px' }}>
+            <h1
+              style={{
+                fontSize: 'clamp(38px,6vw,68px)',
+                margin: '0 0 12px',
+              }}
+            >
               لوحة تحكم ليل
             </h1>
             <p className="muted">
-              إضافة وتعديل المنتجات، رفع الصور، اختيار المقاسات والألوان، وإدارة المخزون حسب المقاس.
+              إضافة وتعديل المنتجات، رفع الصور، اختيار المقاسات والألوان، وإدارة
+              المخزون حسب المقاس.
             </p>
           </div>
 
@@ -426,7 +463,9 @@ export default function Admin() {
 
               <select
                 value={form.category}
-                onChange={(event) => patchForm({ category: event.target.value })}
+                onChange={(event) =>
+                  patchForm({ category: event.target.value })
+                }
               >
                 {PRODUCT_CATEGORY_OPTIONS.map((category) => (
                   <option key={category} value={category}>
@@ -437,7 +476,9 @@ export default function Admin() {
 
               <textarea
                 value={form.description}
-                onChange={(event) => patchForm({ description: event.target.value })}
+                onChange={(event) =>
+                  patchForm({ description: event.target.value })
+                }
                 placeholder="وصف المنتج"
                 rows={4}
               />
@@ -452,7 +493,9 @@ export default function Admin() {
                 type="number"
                 min="1"
                 value={form.minOrder}
-                onChange={(event) => patchForm({ minOrder: event.target.value })}
+                onChange={(event) =>
+                  patchForm({ minOrder: event.target.value })
+                }
                 placeholder="أقل كمية MOQ"
               />
 
@@ -465,7 +508,11 @@ export default function Admin() {
                   <button
                     key={size}
                     type="button"
-                    className={form.selectedSizes.includes(size) ? 'btn btn-gold' : 'btn btn-outline'}
+                    className={
+                      form.selectedSizes.includes(size)
+                        ? 'btn btn-gold'
+                        : 'btn btn-outline'
+                    }
                     onClick={() => toggleSize(size)}
                   >
                     {size}
@@ -481,7 +528,9 @@ export default function Admin() {
                       type="number"
                       min="0"
                       value={form.sizes[size] || 0}
-                      onChange={(event) => updateSizeStock(size, event.target.value)}
+                      onChange={(event) =>
+                        updateSizeStock(size, event.target.value)
+                      }
                       placeholder={`مخزون ${size}`}
                     />
                   ))}
@@ -504,7 +553,11 @@ export default function Admin() {
                   <button
                     key={color}
                     type="button"
-                    className={form.selectedColors.includes(color) ? 'btn btn-gold' : 'btn btn-outline'}
+                    className={
+                      form.selectedColors.includes(color)
+                        ? 'btn btn-gold'
+                        : 'btn btn-outline'
+                    }
                     onClick={() => toggleColor(color)}
                   >
                     {color}
@@ -523,41 +576,56 @@ export default function Admin() {
 
               <input
                 value={form.imageUrl}
-                onChange={(event) => patchForm({ imageUrl: event.target.value })}
+                onChange={(event) =>
+                  patchForm({ imageUrl: event.target.value })
+                }
                 placeholder="رابط الصورة الرئيسية"
               />
 
               <textarea
                 value={form.galleryText}
-                onChange={(event) => patchForm({ galleryText: event.target.value })}
+                onChange={(event) =>
+                  patchForm({ galleryText: event.target.value })
+                }
                 placeholder="روابط صور إضافية - كل رابط في سطر"
                 rows={4}
               />
 
               <input
                 value={form.videoUrl}
-                onChange={(event) => patchForm({ videoUrl: event.target.value })}
+                onChange={(event) =>
+                  patchForm({ videoUrl: event.target.value })
+                }
                 placeholder="رابط فيديو المنتج اختياري"
               />
 
               <input
                 value={form.seoTitle}
-                onChange={(event) => patchForm({ seoTitle: event.target.value })}
+                onChange={(event) =>
+                  patchForm({ seoTitle: event.target.value })
+                }
                 placeholder="SEO Title اختياري"
               />
 
               <textarea
                 value={form.seoDescription}
-                onChange={(event) => patchForm({ seoDescription: event.target.value })}
+                onChange={(event) =>
+                  patchForm({ seoDescription: event.target.value })
+                }
                 placeholder="SEO Description اختياري"
                 rows={3}
               />
 
-              <label className="notice" style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+              <label
+                className="notice"
+                style={{ display: 'flex', gap: 10, alignItems: 'center' }}
+              >
                 <input
                   type="checkbox"
                   checked={form.active}
-                  onChange={(event) => patchForm({ active: event.target.checked })}
+                  onChange={(event) =>
+                    patchForm({ active: event.target.checked })
+                  }
                   style={{ width: 'auto' }}
                 />
                 المنتج ظاهر في الكتالوج
@@ -573,7 +641,11 @@ export default function Admin() {
               </button>
 
               {editingId ? (
-                <button className="btn btn-outline" type="button" onClick={resetForm}>
+                <button
+                  className="btn btn-outline"
+                  type="button"
+                  onClick={resetForm}
+                >
                   إلغاء التعديل
                 </button>
               ) : null}
@@ -591,7 +663,11 @@ export default function Admin() {
               <li>تنبيه مخزون عند 5 قطع أو أقل.</li>
             </ul>
 
-            <button className="btn btn-outline" type="button" onClick={saveInquiry}>
+            <button
+              className="btn btn-outline"
+              type="button"
+              onClick={saveInquiry}
+            >
               حفظ طلب توريد تجريبي
             </button>
 
@@ -626,13 +702,21 @@ export default function Admin() {
                   <img
                     src={product.imageUrl}
                     alt={product.name}
-                    style={{ borderRadius: 18, marginBottom: 16, maxHeight: 220, objectFit: 'cover', width: '100%' }}
+                    style={{
+                      borderRadius: 18,
+                      marginBottom: 16,
+                      maxHeight: 220,
+                      objectFit: 'cover',
+                      width: '100%',
+                    }}
                   />
                 ) : null}
 
                 <div className="chips">
                   {product.selectedSizes.map((size) => (
-                    <small key={size}>{size}: {product.sizes[size] || 0}</small>
+                    <small key={size}>
+                      {size}: {product.sizes[size] || 0}
+                    </small>
                   ))}
                 </div>
 
@@ -666,10 +750,19 @@ export default function Admin() {
                 </div>
 
                 <div className="heroActions">
-                  <button className="btn btn-outline" type="button" onClick={() => editProduct(product)}>
+                  <button
+                    className="btn btn-outline"
+                    type="button"
+                    onClick={() => editProduct(product)}
+                  >
                     تعديل
                   </button>
-                  <button className="btn btn-outline" type="button" onClick={() => removeProduct(product)}>
+
+                  <button
+                    className="btn btn-outline"
+                    type="button"
+                    onClick={() => removeProduct(product)}
+                  >
                     حذف
                   </button>
                 </div>
