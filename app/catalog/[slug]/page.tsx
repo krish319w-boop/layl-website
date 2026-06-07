@@ -22,8 +22,17 @@ export default function ProductPage() {
       try {
         if (!db || !slug) return;
 
-        const snapshot = await getDocs(
-          query(collection(db, 'products'), where('slug', '==', slug))
+        let snapshot = await getDocs(
+  query(collection(db, 'products'), where('slug', '==', slug))
+);
+
+if (snapshot.empty) {
+  const code = slug.split('-')[0];
+
+  snapshot = await getDocs(
+    query(collection(db, 'products'), where('code', '==', code))
+  );
+}
         );
 
         if (snapshot.empty) {
