@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import Link from 'next/link';
 
 type ProductCardProps = {
@@ -11,6 +10,7 @@ type ProductCardProps = {
     description?: string;
     price?: string;
     imageUrl?: string;
+    gallery?: string[];
     selectedSizes?: string[];
     selectedColors?: string[];
     stockStatus?: string;
@@ -18,18 +18,25 @@ type ProductCardProps = {
 };
 
 export default function ProductCard({ product }: ProductCardProps) {
-  const productImage = product.imageUrl || '/images/logo.jpeg';
-  const productSlug = product.slug;
+  const productImage =
+    product.imageUrl || product.gallery?.[0] || '/images/logo.jpeg';
 
   return (
-    <Link className="productCard card hoverLift" href={`/catalog/${productSlug}`}>
+    <Link
+      className="productCard card hoverLift"
+      href={`/catalog/${product.slug}`}
+    >
       <div className="productImageWrap">
-        <Image
+        <img
           src={productImage}
           alt={product.name}
-          width={700}
-          height={900}
           className="productImage"
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'contain',
+            background: '#0a0908',
+          }}
         />
       </div>
 

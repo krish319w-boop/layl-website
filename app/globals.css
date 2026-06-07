@@ -843,3 +843,11 @@ form{display:grid;gap:14px}input,textarea,select{width:100%;border:1px solid rgb
 .productImageWrap {
   background: #0a0908;
 }
+.productImageWrap {
+  background: #0a0908 !important;
+}
+
+.productImage {
+  object-fit: contain !important;
+  background: #0a0908 !important;
+}
