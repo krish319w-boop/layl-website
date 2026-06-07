@@ -14,7 +14,7 @@ export default function AdminLogin() {
   async function login() {
     try {
       if (!auth) {
-        setStatus('Firebase Auth غير مفعّل.');
+        setStatus('Firebase Auth غير مفعّل. راجع Environment Variables.');
         return;
       }
 
@@ -36,14 +36,14 @@ export default function AdminLogin() {
           <form>
             <input
               type="email"
-              placeholder="Email"
+              placeholder="البريد الإلكتروني"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
 
             <input
               type="password"
-              placeholder="Password"
+              placeholder="كلمة المرور"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
@@ -53,7 +53,11 @@ export default function AdminLogin() {
             </button>
           </form>
 
-          {status && <p className="notice" style={{ marginTop: 16 }}>{status}</p>}
+          {status && (
+            <p className="notice" style={{ marginTop: 16 }}>
+              {status}
+            </p>
+          )}
         </div>
       </div>
     </main>
