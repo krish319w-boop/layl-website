@@ -3,8 +3,11 @@ import Image from 'next/image';
 import SectionTitle from '@/components/SectionTitle';
 import { brand, b2bFeatures, images } from '@/lib/content';
 
-export const metadata: Metadata = { title:'طلبات الجملة والتوريد B2B', description:'اطلب عرض توريد B2B من ليل للمتاجر والبوتيكات وتجار الجملة.' };
-
+export const metadata = {
+  title: "قصتنا | أكثر من 20 عاماً في التصنيع",
+  description:
+    "تعرف على رحلة مصنع ليل وخبرتنا الممتدة لأكثر من 20 عاماً في صناعة الملابس النسائية واللانجيري."
+};
 export default function B2B(){
   const msg = 'مرحبًا، أرغب في طلب عرض توريد B2B من ليل. برجاء التواصل لتحديد الموديلات والكميات والأسعار.';
   return <main className="section" style={{paddingTop:145}}>

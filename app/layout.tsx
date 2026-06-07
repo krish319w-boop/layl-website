@@ -8,7 +8,7 @@ import JsonLd from '@/components/JsonLd';
 import MarketingPixels from '@/components/MarketingPixels';
 
 import { localBusinessSchema, organizationSchema } from '@/lib/seo';
-import { brand, siteUrl } from '@/lib/content';
+import { siteUrl } from '@/lib/content';
 
 const ogImage = `${siteUrl}/og-image.png`;
 
@@ -22,31 +22,37 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
 
   title: {
-    default: 'ليل | مصنع لانجيري راقي وتوريد جملة B2B في مصر',
-    template: '%s | ليل',
+    default: 'ليل | مصنع لانجيري وملابس نسائية جملة في مصر',
+    template: '%s | Layl',
   },
 
   description:
-    'ليل مصنع لانجيري وملابس نسائية راقية بروح الفستان للتوريد B2B. توريد لانجيري جملة، ملابس نسائية جملة، وتصنيع فساتين حريمي بخبرة أكثر من 20 عاماً داخل مصر ودول الخليج.',
+    'مصنع ليل للانجيري والملابس النسائية في مصر. توريد جملة للبوتيكات والمتاجر وشركات التوزيع داخل مصر والخليج بخبرة أكثر من 20 عاماً.',
 
   keywords: [
     'مصنع لانجيري مصر',
+    'لانجيري جملة',
     'توريد لانجيري جملة',
     'لانجيري جملة مصر',
     'ملابس نسائية جملة',
+    'ملابس حريمي جملة',
+    'مصنع فساتين حريمي',
     'مصنع فساتين حريمي مصر',
+    'مصنع ملابس نسائية',
     'مصنع ملابس نسائية في القاهرة',
-    'توريد ملابس B2B',
     'مصنع فساتين لانجيري',
-    'B2B Lingerie Egypt',
-    'Egypt lingerie manufacturer',
-    'wholesale lingerie Egypt',
-    'women wear manufacturer Egypt',
+    'توريد ملابس B2B',
     'توريد لانجيري للخليج',
     'لانجيري جملة السعودية',
     'ملابس نسائية جملة الإمارات',
     'تصدير ملابس نسائية للخليج',
+    'B2B Lingerie Egypt',
+    'Wholesale Lingerie Egypt',
+    'Egypt lingerie manufacturer',
+    'women wear manufacturer Egypt',
+    'Layl Lingerie',
     'ليل Layl',
+    'مصنع ليل',
   ],
 
   applicationName: 'Layl',
@@ -76,7 +82,7 @@ export const metadata: Metadata = {
   },
 
   openGraph: {
-    title: 'ليل | مصنع لانجيري راقي وتوريد جملة B2B في مصر',
+    title: 'ليل | مصنع لانجيري وملابس نسائية جملة في مصر',
     description:
       'مصنع ليل لتوريد اللانجيري والملابس النسائية بالجملة داخل مصر ودول الخليج. جودة موثوقة، تصميمات عصرية، وأسعار تنافسية للتجار والمتاجر.',
     url: siteUrl,
@@ -88,14 +94,14 @@ export const metadata: Metadata = {
         url: ogImage,
         width: 1200,
         height: 630,
-        alt: 'ليل | مصنع لانجيري راقي وتوريد جملة B2B في مصر',
+        alt: 'ليل | مصنع لانجيري وملابس نسائية جملة في مصر',
       },
     ],
   },
 
   twitter: {
     card: 'summary_large_image',
-    title: 'ليل | مصنع لانجيري راقي وتوريد B2B في مصر',
+    title: 'ليل | مصنع لانجيري وملابس نسائية جملة في مصر',
     description:
       'توريد لانجيري وملابس نسائية جملة بخبرة أكثر من 20 عاماً للمتاجر وتجار الجملة داخل مصر والخليج.',
     images: [ogImage],
@@ -130,6 +136,39 @@ export default function RootLayout({
     },
   };
 
+  const fashionBusinessSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: 'Layl Lingerie',
+    alternateName: 'ليل',
+    url: siteUrl,
+    logo: `${siteUrl}/images/logo.jpeg`,
+    image: ogImage,
+    description:
+      'مصنع ليل للانجيري والملابس النسائية في مصر، متخصص في توريد الجملة وحلول B2B للمتاجر والبوتيكات داخل مصر والخليج.',
+    telephone: '+201148871999',
+    email: 'info@layl-eg.com',
+    address: {
+      '@type': 'PostalAddress',
+      addressCountry: 'EG',
+      addressLocality: 'Cairo',
+    },
+    areaServed: ['EG', 'SA', 'AE', 'KW', 'QA', 'BH', 'OM'],
+    keywords: [
+      'مصنع لانجيري مصر',
+      'توريد لانجيري جملة',
+      'ملابس نسائية جملة',
+      'B2B Lingerie Egypt',
+      'Wholesale Lingerie Egypt',
+    ],
+    sameAs: [
+      'https://www.facebook.com/profile.php?id=61590401590088',
+      'https://www.instagram.com/layl2026iii/',
+      'https://t.me/Sarasoliman2810',
+      'https://www.tiktok.com/@layllayl182?is_from_webapp=1&sender_device=pc',
+    ],
+  };
+
   return (
     <html lang="ar" dir="rtl">
       <body>
@@ -138,6 +177,7 @@ export default function RootLayout({
         <JsonLd data={organizationSchema()} />
         <JsonLd data={localBusinessSchema()} />
         <JsonLd data={websiteSchema} />
+        <JsonLd data={fashionBusinessSchema} />
 
         <Header />
 

@@ -3,12 +3,11 @@ import Image from 'next/image';
 import SectionTitle from '@/components/SectionTitle';
 import { images, story } from '@/lib/content';
 
-export const metadata: Metadata = {
-  title: 'قصتنا',
+export const metadata = {
+  title: "قصتنا | أكثر من 20 عاماً في التصنيع",
   description:
-    'قصة ليل وخبرة أكثر من 20 عاماً في صناعة الملابس النسائية واللانجيري الراقي بروح الفستان.',
+    "تعرف على رحلة مصنع ليل وخبرتنا الممتدة لأكثر من 20 عاماً في صناعة الملابس النسائية واللانجيري."
 };
-
 const milestones = [
   {
     year: '2004',
