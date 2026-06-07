@@ -1,5 +1,4 @@
-export const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://layl-eg.vercel.app';
-
+export const siteUrl =process.env.NEXT_PUBLIC_SITE_URL || 'https://layl-eg.com';
 export const socialLinks = {
   whatsapp: `https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '201148871999'}`,
   facebook: process.env.NEXT_PUBLIC_FACEBOOK_URL || 'https://www.facebook.com/profile.php?id=61590401590088',
