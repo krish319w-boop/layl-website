@@ -1,61 +1,84 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { addDoc, collection, getDocs, orderBy, query, serverTimestamp } from 'firebase/firestore';
+import {
+  collection,
+  getDocs,
+  orderBy,
+  query,
+  serverTimestamp,
+} from 'firebase/firestore';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
-import { auth, db } from '@/lib/firebase';
 
-type SizeKey = 'M' | 'L' | 'XL' | '2XL';
+import { auth, db, storage } from '@/lib/firebase';
+import {
+  calculateStock,
+  createProduct,
+  deleteProduct,
+  lowStockLimit,
+  PRODUCT_CATEGORY_OPTIONS,
+  PRODUCT_COLOR_OPTIONS,
+  PRODUCT_SIZE_OPTIONS,
+  slugify,
+  updateProduct,
+  type FirebaseProduct,
+  type ProductStock,
+  type SizeKey,
+} from '@/lib/firebaseProducts';
 
-type ProductRow = {
-  id: string;
+type ProductForm = {
   name: string;
+  slug: string;
   code: string;
   category: string;
-  sizes: Record<SizeKey, number>;
-  totalStock: number;
-  stockStatus: string;
-  lowStockSizes: string[];
+  description: string;
+  price: string;
+  minOrder: string;
+  imageUrl: string;
+  galleryText: string;
+  videoUrl: string;
+  selectedSizes: SizeKey[];
+  selectedColors: string[];
+  sizes: ProductStock;
+  active: boolean;
+  seoTitle: string;
+  seoDescription: string;
 };
 
-const lowStockLimit = 5;
+const emptyForm: ProductForm = {
+  name: '',
+  slug: '',
+  code: '',
+  category: 'لانجيري',
+  description: '',
+  price: 'تواصل للطلب',
+  minOrder: '12',
+  imageUrl: '',
+  galleryText: '',
+  videoUrl: '',
+  selectedSizes: ['M', 'L', 'XL', '2XL'],
+  selectedColors: [],
+  sizes: { M: 0, L: 0, XL: 0, '2XL': 0 },
+  active: true,
+  seoTitle: '',
+  seoDescription: '',
+};
 
 export default function Admin() {
   const router = useRouter();
 
   const [authLoading, setAuthLoading] = useState(true);
   const [status, setStatus] = useState('');
+  const [products, setProducts] = useState<FirebaseProduct[]>([]);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [form, setForm] = useState<ProductForm>(emptyForm);
 
-  const [name, setName] = useState('موديل جديد B2B');
-  const [code, setCode] = useState('L00');
-  const [category, setCategory] = useState('B2B / Gulf Supply');
-  const [minOrder, setMinOrder] = useState('12');
-  const [imageUrl, setImageUrl] = useState('');
-  const [videoUrl, setVideoUrl] = useState('');
-  const [seoTitle, setSeoTitle] = useState('');
-  const [seoDescription, setSeoDescription] = useState('');
-
-  const [sizes, setSizes] = useState<Record<SizeKey, number>>({
-    M: 0,
-    L: 0,
-    XL: 0,
-    '2XL': 0,
-  });
-
-  const [products, setProducts] = useState<ProductRow[]>([]);
-
-  const totalStock = useMemo(
-    () => Object.values(sizes).reduce((sum, value) => sum + Number(value || 0), 0),
-    [sizes]
-  );
-
-  const lowSizes = useMemo(
-    () =>
-      Object.entries(sizes)
-        .filter(([, value]) => Number(value) <= lowStockLimit)
-        .map(([key]) => key),
-    [sizes]
+  const stockInfo = useMemo(
+    () => calculateStock(form.sizes, form.selectedSizes),
+    [form.sizes, form.selectedSizes]
   );
 
   useEffect(() => {
@@ -76,10 +99,43 @@ export default function Admin() {
     return () => unsub();
   }, [router]);
 
-  function updateSize(key: SizeKey, value: string) {
-    setSizes((prev) => ({
+  function patchForm(patch: Partial<ProductForm>) {
+    setForm((prev) => ({ ...prev, ...patch }));
+  }
+
+  function toggleSize(size: SizeKey) {
+    setForm((prev) => {
+      const selected = prev.selectedSizes.includes(size)
+        ? prev.selectedSizes.filter((item) => item !== size)
+        : [...prev.selectedSizes, size];
+
+      return {
+        ...prev,
+        selectedSizes: selected,
+        sizes: {
+          ...prev.sizes,
+          [size]: prev.sizes[size] ?? 0,
+        },
+      };
+    });
+  }
+
+  function toggleColor(color: string) {
+    setForm((prev) => ({
       ...prev,
-      [key]: Number(value || 0),
+      selectedColors: prev.selectedColors.includes(color)
+        ? prev.selectedColors.filter((item) => item !== color)
+        : [...prev.selectedColors, color],
+    }));
+  }
+
+  function updateSizeStock(size: SizeKey, value: string) {
+    setForm((prev) => ({
+      ...prev,
+      sizes: {
+        ...prev.sizes,
+        [size]: Number(value || 0),
+      },
     }));
   }
 
@@ -93,40 +149,103 @@ export default function Admin() {
     try {
       if (!db) return;
 
-      const q = query(collection(db, 'products'), orderBy('createdAt', 'desc'));
-      const snapshot = await getDocs(q);
+      const snapshot = await getDocs(query(collection(db, 'products'), orderBy('createdAt', 'desc')));
 
-      const rows = snapshot.docs.map((doc) => {
-        const data = doc.data() as any;
-
-        const rowSizes: Record<SizeKey, number> = {
-          M: Number(data?.sizes?.M || 0),
-          L: Number(data?.sizes?.L || 0),
-          XL: Number(data?.sizes?.XL || 0),
-          '2XL': Number(data?.sizes?.['2XL'] || 0),
-        };
-
-        const rowTotalStock = Object.values(rowSizes).reduce(
-          (sum, value) => sum + Number(value || 0),
-          0
-        );
+      const rows = snapshot.docs.map((item) => {
+        const data = item.data() as any;
+        const selectedSizes = (data.selectedSizes || Object.keys(data.sizes || {})) as SizeKey[];
+        const sizes = (data.sizes || {}) as ProductStock;
+        const stock = calculateStock(sizes, selectedSizes);
 
         return {
-          id: doc.id,
+          id: item.id,
           name: data.name || '',
+          slug: data.slug || slugify(data.name || item.id),
           code: data.code || '',
-          category: data.category || '',
-          sizes: rowSizes,
-          totalStock: Number(data.totalStock ?? rowTotalStock),
-          stockStatus: data.stockStatus || 'in_stock',
-          lowStockSizes: data.lowStockSizes || [],
-        };
+          category: data.category || 'لانجيري',
+          description: data.description || '',
+          price: data.price || 'تواصل للطلب',
+          minOrder: Number(data.minOrder || 12),
+          imageUrl: data.imageUrl || '/images/logo.jpeg',
+          gallery: Array.isArray(data.gallery) && data.gallery.length ? data.gallery : [data.imageUrl || '/images/logo.jpeg'],
+          videoUrl: data.videoUrl || '',
+          selectedSizes,
+          selectedColors: Array.isArray(data.selectedColors) ? data.selectedColors : [],
+          sizes,
+          totalStock: Number(data.totalStock ?? stock.totalStock),
+          stockStatus: data.stockStatus || stock.stockStatus,
+          lowStockSizes: Array.isArray(data.lowStockSizes) ? data.lowStockSizes : stock.lowStockSizes,
+          active: data.active !== false,
+          seo: data.seo || {},
+          createdAt: data.createdAt,
+          updatedAt: data.updatedAt,
+        } satisfies FirebaseProduct;
       });
 
       setProducts(rows);
     } catch {
       setStatus('لم يتم تحميل المنتجات. راجع صلاحيات Firestore.');
     }
+  }
+
+  async function uploadProductImage(file: File) {
+    try {
+      if (!storage) {
+        setStatus('Firebase Storage غير مفعّل.');
+        return;
+      }
+
+      setUploading(true);
+      setStatus('جارِ رفع الصورة...');
+
+      const safeName = file.name.replace(/\s+/g, '-');
+      const imageRef = ref(storage, `products/${Date.now()}-${safeName}`);
+
+      await uploadBytes(imageRef, file);
+      const url = await getDownloadURL(imageRef);
+
+      setForm((prev) => ({
+        ...prev,
+        imageUrl: url,
+        galleryText: prev.galleryText ? `${prev.galleryText}\n${url}` : url,
+      }));
+
+      setStatus('تم رفع الصورة بنجاح.');
+    } catch {
+      setStatus('فشل رفع الصورة. راجع Firebase Storage Rules.');
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  function resetForm() {
+    setEditingId(null);
+    setForm(emptyForm);
+    setStatus('');
+  }
+
+  function editProduct(product: FirebaseProduct) {
+    setEditingId(product.id || null);
+    setForm({
+      name: product.name,
+      slug: product.slug,
+      code: product.code,
+      category: product.category || 'لانجيري',
+      description: product.description || '',
+      price: product.price || 'تواصل للطلب',
+      minOrder: String(product.minOrder || 12),
+      imageUrl: product.imageUrl || '',
+      galleryText: (product.gallery || []).join('\n'),
+      videoUrl: product.videoUrl || '',
+      selectedSizes: product.selectedSizes || [],
+      selectedColors: product.selectedColors || [],
+      sizes: product.sizes || {},
+      active: product.active !== false,
+      seoTitle: product.seo?.title || '',
+      seoDescription: product.seo?.description || '',
+    });
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   async function saveProduct() {
@@ -136,45 +255,89 @@ export default function Admin() {
         return;
       }
 
-      setStatus('جارِ حفظ المنتج...');
+      if (!form.name.trim()) {
+        setStatus('اكتب اسم المنتج أولاً.');
+        return;
+      }
 
-      const stockStatus =
-        totalStock === 0 ? 'out_of_stock' : lowSizes.length ? 'low_stock' : 'in_stock';
+      if (!form.imageUrl.trim()) {
+        setStatus('ارفع صورة المنتج أو ضع رابط الصورة أولاً.');
+        return;
+      }
 
-      await addDoc(collection(db, 'products'), {
-        name,
-        code,
-        category,
-        minOrder: Number(minOrder),
-        imageUrl,
-        videoUrl,
-        sizes,
-        totalStock,
+      if (!form.selectedSizes.length) {
+        setStatus('اختار مقاس واحد على الأقل.');
+        return;
+      }
+
+      if (!form.selectedColors.length) {
+        setStatus('اختار لون واحد على الأقل.');
+        return;
+      }
+
+      const slug = form.slug.trim() || slugify(`${form.code}-${form.name}`);
+      const gallery = form.galleryText
+        .split('\n')
+        .map((item) => item.trim())
+        .filter(Boolean);
+
+      const payload = {
+        name: form.name.trim(),
+        slug,
+        code: form.code.trim() || slug.toUpperCase(),
+        category: form.category,
+        description: form.description.trim(),
+        price: form.price.trim() || 'تواصل للطلب',
+        minOrder: Number(form.minOrder || 12),
+        imageUrl: form.imageUrl.trim(),
+        gallery: gallery.length ? gallery : [form.imageUrl.trim()],
+        videoUrl: form.videoUrl.trim(),
+        selectedSizes: form.selectedSizes,
+        selectedColors: form.selectedColors,
+        sizes: form.sizes,
+        totalStock: stockInfo.totalStock,
         lowStockLimit,
-        stockStatus,
-        lowStockSizes: lowSizes,
+        stockStatus: stockInfo.stockStatus,
+        lowStockSizes: stockInfo.lowStockSizes,
+        active: form.active,
         seo: {
-          title: seoTitle || `${name} | Layl B2B`,
+          title: form.seoTitle || `${form.name} | Layl B2B`,
           description:
-            seoDescription ||
-            'Layl premium B2B lingerie and women wear supply for Egypt and Gulf markets.',
+            form.seoDescription ||
+            `${form.description} متاح للتوريد التجاري B2B من مصنع ليل.`,
         },
         markets: ['Egypt', 'Saudi Arabia', 'UAE', 'Kuwait', 'Qatar', 'Bahrain', 'Oman'],
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
-      });
+      };
 
-      setStatus(
-        stockStatus === 'out_of_stock'
-          ? 'تم الحفظ — المنتج غير متوفر لأن المخزون صفر.'
-          : lowSizes.length
-          ? `تم الحفظ مع تحذير مخزون منخفض في مقاسات: ${lowSizes.join(', ')}`
-          : 'تم حفظ المنتج بنجاح والمخزون متوفر.'
-      );
+      setStatus(editingId ? 'جارِ تحديث المنتج...' : 'جارِ حفظ المنتج...');
+
+      if (editingId) {
+        await updateProduct(editingId, payload);
+        setStatus('تم تحديث المنتج بنجاح.');
+      } else {
+        await createProduct(payload as any);
+        setStatus('تم حفظ المنتج بنجاح وسيظهر في الكتالوج فوراً.');
+      }
 
       await loadProducts();
+      resetForm();
     } catch {
       setStatus('لم يتم الحفظ. تأكد من إعداد Firebase وFirestore Rules.');
+    }
+  }
+
+  async function removeProduct(product: FirebaseProduct) {
+    if (!product.id) return;
+
+    const confirmed = window.confirm(`هل تريد حذف المنتج: ${product.name}؟`);
+    if (!confirmed) return;
+
+    try {
+      await deleteProduct(product.id);
+      setStatus('تم حذف المنتج.');
+      await loadProducts();
+    } catch {
+      setStatus('لم يتم الحذف. راجع صلاحيات Firestore.');
     }
   }
 
@@ -185,15 +348,15 @@ export default function Admin() {
         return;
       }
 
-      setStatus('جارِ حفظ طلب توريد تجريبي...');
-
-      await addDoc(collection(db, 'orders'), {
-        company: 'شركة تجريبية',
-        country: 'GCC',
-        quantity: 100,
-        status: 'new',
-        source: 'website-admin-test',
-        createdAt: serverTimestamp(),
+      await import('firebase/firestore').then(async ({ addDoc, collection }) => {
+        await addDoc(collection(db, 'orders'), {
+          company: 'شركة تجريبية',
+          country: 'GCC',
+          quantity: 100,
+          status: 'new',
+          source: 'website-admin-test',
+          createdAt: serverTimestamp(),
+        });
       });
 
       setStatus('تم حفظ طلب توريد تجريبي في Collection orders.');
@@ -215,13 +378,21 @@ export default function Admin() {
   return (
     <main className="section" style={{ paddingTop: 145 }}>
       <div className="container">
-        <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            gap: 16,
+            alignItems: 'center',
+            flexWrap: 'wrap',
+          }}
+        >
           <div>
             <h1 style={{ fontSize: 'clamp(38px,6vw,68px)', margin: '0 0 12px' }}>
               لوحة تحكم ليل
             </h1>
             <p className="muted">
-              إدارة المنتجات، المخزون حسب المقاس، تحذيرات المخزون، الطلبات، SEO، وروابط الصور والفيديو.
+              إضافة وتعديل المنتجات، رفع الصور، اختيار المقاسات والألوان، وإدارة المخزون حسب المقاس.
             </p>
           </div>
 
@@ -232,81 +403,192 @@ export default function Admin() {
 
         <div className="adminGrid" style={{ marginTop: 28 }}>
           <div className="card feature">
-            <h3>إضافة منتج ومخزون</h3>
+            <h3>{editingId ? 'تعديل منتج' : 'إضافة منتج جديد'}</h3>
 
             <form>
-              <input value={name} onChange={(e) => setName(e.target.value)} placeholder="اسم الموديل" />
-              <input value={code} onChange={(e) => setCode(e.target.value)} placeholder="كود الموديل" />
-              <input value={category} onChange={(e) => setCategory(e.target.value)} placeholder="التصنيف" />
-              <input value={minOrder} onChange={(e) => setMinOrder(e.target.value)} placeholder="أقل كمية MOQ" />
-
               <input
-                value={imageUrl}
-                onChange={(e) => setImageUrl(e.target.value)}
-                placeholder="رابط صورة المنتج بعد رفعها"
+                value={form.name}
+                onChange={(event) => patchForm({ name: event.target.value })}
+                placeholder="اسم الموديل"
               />
 
               <input
-                value={videoUrl}
-                onChange={(e) => setVideoUrl(e.target.value)}
-                placeholder="رابط فيديو المنتج اختياري"
+                value={form.code}
+                onChange={(event) => patchForm({ code: event.target.value })}
+                placeholder="كود الموديل"
               />
 
-              <div className="grid2">
-                {(['M', 'L', 'XL', '2XL'] as SizeKey[]).map((key) => (
-                  <input
-                    key={key}
-                    type="number"
-                    min="0"
-                    value={sizes[key]}
-                    onChange={(e) => updateSize(key, e.target.value)}
-                    placeholder={`مخزون ${key}`}
-                  />
+              <input
+                value={form.slug}
+                onChange={(event) => patchForm({ slug: event.target.value })}
+                placeholder="Slug اختياري - يترك فارغاً للتوليد تلقائياً"
+              />
+
+              <select
+                value={form.category}
+                onChange={(event) => patchForm({ category: event.target.value })}
+              >
+                {PRODUCT_CATEGORY_OPTIONS.map((category) => (
+                  <option key={category} value={category}>
+                    {category}
+                  </option>
+                ))}
+              </select>
+
+              <textarea
+                value={form.description}
+                onChange={(event) => patchForm({ description: event.target.value })}
+                placeholder="وصف المنتج"
+                rows={4}
+              />
+
+              <input
+                value={form.price}
+                onChange={(event) => patchForm({ price: event.target.value })}
+                placeholder="السعر أو تواصل للطلب"
+              />
+
+              <input
+                type="number"
+                min="1"
+                value={form.minOrder}
+                onChange={(event) => patchForm({ minOrder: event.target.value })}
+                placeholder="أقل كمية MOQ"
+              />
+
+              <div className="notice">
+                <b>المقاسات:</b> اختر المقاسات التي ستظهر للعميل فقط.
+              </div>
+
+              <div className="chips">
+                {PRODUCT_SIZE_OPTIONS.map((size) => (
+                  <button
+                    key={size}
+                    type="button"
+                    className={form.selectedSizes.includes(size) ? 'btn btn-gold' : 'btn btn-outline'}
+                    onClick={() => toggleSize(size)}
+                  >
+                    {size}
+                  </button>
                 ))}
               </div>
 
+              {form.selectedSizes.length ? (
+                <div className="grid2">
+                  {form.selectedSizes.map((size) => (
+                    <input
+                      key={size}
+                      type="number"
+                      min="0"
+                      value={form.sizes[size] || 0}
+                      onChange={(event) => updateSizeStock(size, event.target.value)}
+                      placeholder={`مخزون ${size}`}
+                    />
+                  ))}
+                </div>
+              ) : null}
+
               <p className="notice">
-                إجمالي المخزون الحالي: <b>{totalStock}</b> قطعة
+                إجمالي المخزون: <b>{stockInfo.totalStock}</b> قطعة
+                {stockInfo.lowStockSizes.length
+                  ? ` — تنبيه مخزون في: ${stockInfo.lowStockSizes.join(', ')}`
+                  : ''}
               </p>
 
+              <div className="notice">
+                <b>الألوان:</b> اختر الألوان التي ستظهر للعميل فقط.
+              </div>
+
+              <div className="chips">
+                {PRODUCT_COLOR_OPTIONS.map((color) => (
+                  <button
+                    key={color}
+                    type="button"
+                    className={form.selectedColors.includes(color) ? 'btn btn-gold' : 'btn btn-outline'}
+                    onClick={() => toggleColor(color)}
+                  >
+                    {color}
+                  </button>
+                ))}
+              </div>
+
               <input
-                value={seoTitle}
-                onChange={(e) => setSeoTitle(e.target.value)}
-                placeholder="SEO Title"
+                type="file"
+                accept="image/*"
+                onChange={(event) => {
+                  const file = event.target.files?.[0];
+                  if (file) uploadProductImage(file);
+                }}
+              />
+
+              <input
+                value={form.imageUrl}
+                onChange={(event) => patchForm({ imageUrl: event.target.value })}
+                placeholder="رابط الصورة الرئيسية"
               />
 
               <textarea
-                value={seoDescription}
-                onChange={(e) => setSeoDescription(e.target.value)}
-                placeholder="SEO Description"
+                value={form.galleryText}
+                onChange={(event) => patchForm({ galleryText: event.target.value })}
+                placeholder="روابط صور إضافية - كل رابط في سطر"
+                rows={4}
+              />
+
+              <input
+                value={form.videoUrl}
+                onChange={(event) => patchForm({ videoUrl: event.target.value })}
+                placeholder="رابط فيديو المنتج اختياري"
+              />
+
+              <input
+                value={form.seoTitle}
+                onChange={(event) => patchForm({ seoTitle: event.target.value })}
+                placeholder="SEO Title اختياري"
+              />
+
+              <textarea
+                value={form.seoDescription}
+                onChange={(event) => patchForm({ seoDescription: event.target.value })}
+                placeholder="SEO Description اختياري"
                 rows={3}
               />
 
-              {lowSizes.length ? (
-                <p className="notice">
-                  تحذير: مخزون منخفض أو منتهي في مقاسات {lowSizes.join(', ')}
-                </p>
-              ) : null}
+              <label className="notice" style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+                <input
+                  type="checkbox"
+                  checked={form.active}
+                  onChange={(event) => patchForm({ active: event.target.checked })}
+                  style={{ width: 'auto' }}
+                />
+                المنتج ظاهر في الكتالوج
+              </label>
 
-              <button className="btn btn-gold" type="button" onClick={saveProduct}>
-                حفظ المنتج في Firebase
+              <button
+                className="btn btn-gold"
+                type="button"
+                onClick={saveProduct}
+                disabled={uploading}
+              >
+                {editingId ? 'حفظ التعديل' : 'حفظ المنتج'}
               </button>
+
+              {editingId ? (
+                <button className="btn btn-outline" type="button" onClick={resetForm}>
+                  إلغاء التعديل
+                </button>
+              ) : null}
             </form>
           </div>
 
           <div className="card feature">
             <h3>إدارة الطلبات والتوريد</h3>
 
-            <p>
-              Collections: <b>products</b> للمنتجات والمخزون، <b>orders</b> للطلبات،
-              <b> b2b_inquiries</b> لاستفسارات الشركات.
-            </p>
-
             <ul className="list">
-              <li>تنبيه تلقائي عند وصول أي مقاس إلى 5 قطع أو أقل.</li>
-              <li>حساب إجمالي المخزون تلقائياً من المقاسات.</li>
-              <li>حالة المنتج: متوفر / مخزون منخفض / غير متوفر.</li>
-              <li>SEO ديناميك لكل منتج: Title / Description / Schema.</li>
+              <li>Collection المنتجات يتم إنشاؤه تلقائياً عند أول حفظ.</li>
+              <li>المقاسات المختارة فقط تظهر للعميل.</li>
+              <li>الألوان المختارة فقط تظهر للعميل.</li>
+              <li>Slug تلقائي لكل منتج.</li>
+              <li>تنبيه مخزون عند 5 قطع أو أقل.</li>
             </ul>
 
             <button className="btn btn-outline" type="button" onClick={saveInquiry}>
@@ -331,7 +613,7 @@ export default function Admin() {
         </div>
 
         <section style={{ marginTop: 34 }}>
-          <h2>المنتجات والمخزون</h2>
+          <h2>المنتجات الحالية</h2>
 
           <div className="grid3" style={{ marginTop: 18 }}>
             {products.map((product) => (
@@ -340,27 +622,32 @@ export default function Admin() {
                 <h3>{product.name}</h3>
                 <p className="muted">{product.category}</p>
 
+                {product.imageUrl ? (
+                  <img
+                    src={product.imageUrl}
+                    alt={product.name}
+                    style={{ borderRadius: 18, marginBottom: 16, maxHeight: 220, objectFit: 'cover', width: '100%' }}
+                  />
+                ) : null}
+
+                <div className="chips">
+                  {product.selectedSizes.map((size) => (
+                    <small key={size}>{size}: {product.sizes[size] || 0}</small>
+                  ))}
+                </div>
+
+                <div className="chips">
+                  {product.selectedColors.map((color) => (
+                    <small key={color}>{color}</small>
+                  ))}
+                </div>
+
                 <div className="specTable">
-                  <div className="specRow">
-                    <span>M</span>
-                    <b>{product.sizes.M}</b>
-                  </div>
-                  <div className="specRow">
-                    <span>L</span>
-                    <b>{product.sizes.L}</b>
-                  </div>
-                  <div className="specRow">
-                    <span>XL</span>
-                    <b>{product.sizes.XL}</b>
-                  </div>
-                  <div className="specRow">
-                    <span>2XL</span>
-                    <b>{product.sizes['2XL']}</b>
-                  </div>
                   <div className="specRow">
                     <span>الإجمالي</span>
                     <b>{product.totalStock}</b>
                   </div>
+
                   <div className="specRow">
                     <span>الحالة</span>
                     <b>
@@ -371,13 +658,21 @@ export default function Admin() {
                         : 'متوفر'}
                     </b>
                   </div>
+
+                  <div className="specRow">
+                    <span>الظهور</span>
+                    <b>{product.active ? 'ظاهر' : 'مخفي'}</b>
+                  </div>
                 </div>
 
-                {product.lowStockSizes.length ? (
-                  <p className="notice">
-                    تنبيه مخزون: {product.lowStockSizes.join(', ')}
-                  </p>
-                ) : null}
+                <div className="heroActions">
+                  <button className="btn btn-outline" type="button" onClick={() => editProduct(product)}>
+                    تعديل
+                  </button>
+                  <button className="btn btn-outline" type="button" onClick={() => removeProduct(product)}>
+                    حذف
+                  </button>
+                </div>
               </div>
             ))}
           </div>
