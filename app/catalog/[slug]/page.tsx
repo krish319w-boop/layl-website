@@ -20,20 +20,22 @@ export default function ProductPage() {
   useEffect(() => {
     async function loadProduct() {
       try {
-        if (!db || !slug) return;
+        if (!db || !slug) {
+          setProduct(null);
+          return;
+        }
 
         let snapshot = await getDocs(
-  query(collection(db, 'products'), where('slug', '==', slug))
-);
-
-if (snapshot.empty) {
-  const code = slug.split('-')[0];
-
-  snapshot = await getDocs(
-    query(collection(db, 'products'), where('code', '==', code))
-  );
-}
+          query(collection(db, 'products'), where('slug', '==', slug))
         );
+
+        if (snapshot.empty) {
+          const code = slug.split('-')[0];
+
+          snapshot = await getDocs(
+            query(collection(db, 'products'), where('code', '==', code))
+          );
+        }
 
         if (snapshot.empty) {
           setProduct(null);
@@ -42,7 +44,6 @@ if (snapshot.empty) {
 
         const doc = snapshot.docs[0];
         const data = doc.data() as any;
-
         const image = data.imageUrl || '/images/logo.jpeg';
 
         setProduct({
@@ -55,19 +56,30 @@ if (snapshot.empty) {
           price: data.price || 'تواصل للطلب',
           minOrder: Number(data.minOrder || 12),
           imageUrl: image,
-          gallery: Array.isArray(data.gallery) && data.gallery.length ? data.gallery : [image],
+          gallery:
+            Array.isArray(data.gallery) && data.gallery.length
+              ? data.gallery
+              : [image],
           videoUrl: data.videoUrl || '',
-          selectedSizes: data.selectedSizes || [],
-          selectedColors: data.selectedColors || [],
+          selectedSizes: Array.isArray(data.selectedSizes)
+            ? data.selectedSizes
+            : [],
+          selectedColors: Array.isArray(data.selectedColors)
+            ? data.selectedColors
+            : [],
           sizes: data.sizes || {},
           totalStock: Number(data.totalStock || 0),
           stockStatus: data.stockStatus || 'in_stock',
-          lowStockSizes: data.lowStockSizes || [],
+          lowStockSizes: Array.isArray(data.lowStockSizes)
+            ? data.lowStockSizes
+            : [],
           active: data.active !== false,
           seo: data.seo || {},
           createdAt: data.createdAt,
           updatedAt: data.updatedAt,
         });
+      } catch {
+        setProduct(null);
       } finally {
         setLoading(false);
       }
@@ -113,7 +125,12 @@ if (snapshot.empty) {
               width={850}
               height={650}
               priority
-              style={{ objectFit: 'contain', background: '#0a0908' }}
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'contain',
+                background: '#0a0908',
+              }}
             />
           </div>
 
@@ -125,7 +142,12 @@ if (snapshot.empty) {
                 alt={`${product.name} تفاصيل`}
                 width={420}
                 height={280}
-                style={{ objectFit: 'contain', background: '#0a0908' }}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'contain',
+                  background: '#0a0908',
+                }}
               />
             ))}
           </div>
@@ -162,14 +184,20 @@ if (snapshot.empty) {
 
             <div className="specRow">
               <span>التوفر</span>
-              <b>{product.stockStatus === 'out_of_stock' ? 'غير متاح حالياً' : 'متاح للتوريد'}</b>
+              <b>
+                {product.stockStatus === 'out_of_stock'
+                  ? 'غير متاح حالياً'
+                  : 'متاح للتوريد'}
+              </b>
             </div>
           </div>
 
           <div className="heroActions">
             <a
               className="btn btn-gold"
-              href={`https://wa.me/${brand.whatsapp}?text=${encodeURIComponent(msg)}`}
+              href={`https://wa.me/${brand.whatsapp}?text=${encodeURIComponent(
+                msg
+              )}`}
               target="_blank"
               rel="noopener noreferrer"
             >
