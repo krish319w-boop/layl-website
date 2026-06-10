@@ -851,3 +851,26 @@ form{display:grid;gap:14px}input,textarea,select{width:100%;border:1px solid rgb
   object-fit: contain !important;
   background: #0a0908 !important;
 }
+
+/* Dynamic Firebase catalog image fixes */
+.productImageWrap {
+  background: #0a0908 !important;
+}
+
+.productImage {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+  background: #0a0908 !important;
+}
+
+.mainProductImage {
+  background: #0a0908 !important;
+}
+
+.mainProductImage img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+  background: #0a0908 !important;
+}

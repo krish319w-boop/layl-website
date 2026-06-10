@@ -5,13 +5,13 @@ import { fetchProductsFromFirebase } from '@/lib/firebaseProducts';
 export const revalidate = 3600;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const staticRoutes = ['', '/en', '/catalog', '/b2b', '/story', '/faq', '/contact'];
+  const staticRoutes = ['', '/en', '/catalog', '/en/catalog', '/b2b', '/story', '/faq', '/contact'];
 
   let productRoutes: string[] = [];
 
   try {
     const products = await fetchProductsFromFirebase();
-    productRoutes = products.map((product) => `/catalog/${product.slug}`);
+    productRoutes = products.flatMap((product) => [`/catalog/${product.slug}`, `/en/catalog/${product.slug}`]);
   } catch {
     productRoutes = [];
   }

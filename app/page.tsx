@@ -1,16 +1,16 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'مصنع لانجيري وملابس نسائية جملة في مصر',
+  title: 'ليل | تفصيل وتوريد لانجيري جملة للمحلات والبوتيكات',
   description:
-    'ليل مصنع لانجيري وملابس نسائية جملة في مصر. توريد للمتاجر والبوتيكات وتجار الجملة داخل مصر والخليج بخبرة أكثر من 20 عاماً.',
+    'مصنع ليل متخصص في تفصيل وتصنيع وتوريد اللانجيري والملابس النسائية بالجملة للمحلات والبوتيكات وتجار الجملة داخل مصر ودول الخليج.'
 };
 import Image from 'next/image';
 import Link from 'next/link';
 import SectionTitle from '@/components/SectionTitle';
-import ProductCard from '@/components/ProductCard';
+import HomeFeaturedProducts from '@/components/HomeFeaturedProducts';
 import JsonLd from '@/components/JsonLd';
-import { brand, images, products, catalogIntro, processSteps, b2bFeatures, siteUrl } from '@/lib/content';
+import { brand, images, processSteps, b2bFeatures, siteUrl } from '@/lib/content';
 
 export default function Home(){
   return <main>
@@ -64,12 +64,7 @@ export default function Home(){
       </div>
     </section>
 
-    <section className="section">
-      <div className="container">
-        <SectionTitle kicker="الكتالوج" title="اكتشفي مجموعات ليل" text={catalogIntro}/>
-        <div className="grid3">{products.map(p=><ProductCard key={p.slug} product={p}/>)}</div>
-      </div>
-    </section>
+    <HomeFeaturedProducts locale="ar" />
 
     <section className="section">
       <div className="container ctaBand">

@@ -2,11 +2,12 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import SocialIcons from '@/components/SocialIcons';
-import { en, images, products, siteUrl } from '@/lib/content';
+import { en, images, siteUrl } from '@/lib/content';
+import HomeFeaturedProducts from '@/components/HomeFeaturedProducts';
 
 export const metadata: Metadata = {
-  title: 'Layl | Premium B2B Lingerie & Feminine Wear Manufacturer',
-  description: 'Layl is an Egyptian premium feminine wear and lingerie manufacturer serving B2B retailers, wholesalers, and distributors in Egypt and the Gulf.',
+  title: 'Layl | Wholesale Lingerie Manufacturing & B2B Supply Egypt',
+  description: 'Layl manufactures and supplies wholesale lingerie and feminine wear for boutiques, retailers, wholesalers, and Gulf distributors.',
   alternates: { canonical: `${siteUrl}/en`, languages: { ar: siteUrl, en: `${siteUrl}/en` } },
   openGraph: { title: 'Layl | Premium B2B Fashion Manufacturer', description: 'B2B supply for Egypt and GCC markets.', url: `${siteUrl}/en`, locale: 'en_US', type: 'website' }
 };
@@ -34,6 +35,6 @@ export default function EnglishHome(){
       <div className="feature card hoverLift"><div className="featureIcon">03</div><h3>Egypt & Gulf markets</h3><p>SEO and content prepared for Egypt, Saudi Arabia, UAE, Kuwait, Qatar, Bahrain, and Oman.</p></div>
     </div></section>
     <section className="section"><div className="container split"><div className="imagePanel"><Image src={images.cutter} alt="Layl production and cutting stage" width={850} height={650}/></div><div><span className="eyebrow">B2B MANUFACTURING</span><h2>Reliable supply partner for retailers</h2><p className="heroLead">B2B manufacturing and supply solutions for retailers, wholesalers, boutiques, and distributors across Egypt and the Gulf.</p><SocialIcons /></div></div></section>
-    <section className="section"><div className="container"><span className="eyebrow">CATALOG</span><h2>Featured Layl products</h2><div className="grid3">{products.map(p=><article className="productCard card hoverLift" key={p.slug}><Link href={`/en/catalog`}><Image src={p.image} alt={`Layl B2B product ${p.code}`} width={700} height={520}/><div className="productBody"><span className="eyebrow">{p.code} • B2B Supply</span><h3>{p.code === 'L01' ? 'Layl Royal Blue Dress' : p.code === 'L02' ? 'Layl Teal Dress' : 'Layl Premium Black Dress'}</h3><p>Premium feminine wear design available for wholesale supply in Egypt and GCC markets.</p><div className="chips">{p.sizes.map(s=><span key={s}>{s}</span>)}</div></div></Link></article>)}</div></div></section>
+    <HomeFeaturedProducts locale="en" />
   </main>
 }

@@ -155,7 +155,12 @@ export async function fetchProductsFromFirebase() {
 export async function fetchProductBySlug(slug: string) {
   if (!db) return null;
 
-  const snapshot = await getDocs(query(collection(db, 'products'), where('slug', '==', slug)));
+  let snapshot = await getDocs(query(collection(db, 'products'), where('slug', '==', slug)));
+
+  if (snapshot.empty) {
+    const code = slug.split('-')[0];
+    snapshot = await getDocs(query(collection(db, 'products'), where('code', '==', code)));
+  }
 
   if (snapshot.empty) return null;
 

@@ -15,35 +15,49 @@ type ProductCardProps = {
     selectedColors?: string[];
     stockStatus?: string;
   };
+  linkPrefix?: string;
+  locale?: 'ar' | 'en';
 };
 
-export default function ProductCard({ product }: ProductCardProps) {
+export default function ProductCard({
+  product,
+  linkPrefix = '/catalog',
+  locale = 'ar',
+}: ProductCardProps) {
   const productImage =
     product.imageUrl || product.gallery?.[0] || '/images/logo.jpeg';
+
+  const stockText =
+    product.stockStatus === 'out_of_stock'
+      ? locale === 'en'
+        ? 'Out of stock'
+        : 'غير متاح'
+      : product.stockStatus === 'low_stock'
+      ? locale === 'en'
+        ? 'Limited stock'
+        : 'مخزون محدود'
+      : locale === 'en'
+      ? 'Available'
+      : 'متاح';
 
   return (
     <Link
       className="productCard card hoverLift"
-      href={`/catalog/${product.slug}`}
+      href={`${linkPrefix}/${product.slug}`}
     >
       <div className="productImageWrap">
         <img
           src={productImage}
           alt={product.name}
           className="productImage"
-          style={{
-            width: '100%',
-            height: '100%',
-            objectFit: 'contain',
-            background: '#0a0908',
-          }}
+          loading="lazy"
         />
       </div>
 
       <div className="productBody">
         <div className="productMeta">
           <span>{product.code || 'LAYL'}</span>
-          <span>{product.category || 'لانجيري'}</span>
+          <span>{product.category || (locale === 'en' ? 'Lingerie' : 'لانجيري')}</span>
         </div>
 
         <h3>{product.name}</h3>
@@ -63,14 +77,8 @@ export default function ProductCard({ product }: ProductCardProps) {
         </div>
 
         <div className="productMeta">
-          <span>{product.price || 'تواصل للطلب'}</span>
-          <span>
-            {product.stockStatus === 'out_of_stock'
-              ? 'غير متاح'
-              : product.stockStatus === 'low_stock'
-              ? 'مخزون محدود'
-              : 'متاح'}
-          </span>
+          <span>{product.price || (locale === 'en' ? 'Contact for price' : 'تواصل للطلب')}</span>
+          <span>{stockText}</span>
         </div>
       </div>
     </Link>
