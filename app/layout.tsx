@@ -11,7 +11,11 @@ import { localBusinessSchema, organizationSchema } from '@/lib/seo';
 import { siteUrl } from '@/lib/content';
 
 const ogImage = `${siteUrl}/og-image.png`;
-
+icons: {
+  icon: '/icon.png',
+  shortcut: '/icon.png',
+  apple: '/icon.png',
+},
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
@@ -22,12 +26,12 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
 
   title: {
-    default: 'ليل | تفصيل وتوريد لانجيري جملة للمحلات والبوتيكات',
-    template: '%s | Layl',
-  },
-
-  description:
-    'مصنع ليل متخصص في تفصيل وتصنيع وتوريد اللانجيري والملابس النسائية بالجملة للمحلات والبوتيكات وتجار الجملة داخل مصر ودول الخليج.',
+  default:
+    'ليل | تفصيل وتوريد لانجيري جملة للمحلات والبوتيكات في مصر والخليج',
+  template: '%s | Layl',
+},
+description:
+'مصنع ليل متخصص في تفصيل وتصنيع وتوريد اللانجيري والملابس النسائية بالجملة للمحلات والبوتيكات وتجار الجملة داخل مصر ودول الخليج.',
 
   keywords: [
     'مصنع لانجيري مصر',
