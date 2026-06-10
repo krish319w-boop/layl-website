@@ -11,11 +11,7 @@ import { localBusinessSchema, organizationSchema } from '@/lib/seo';
 import { siteUrl } from '@/lib/content';
 
 const ogImage = `${siteUrl}/og-image.png`;
-icons: {
-  icon: '/icon.png',
-  shortcut: '/icon.png',
-  apple: '/icon.png',
-},
+
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
@@ -26,12 +22,13 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
 
   title: {
-  default:
-    'ليل | تفصيل وتوريد لانجيري جملة للمحلات والبوتيكات في مصر والخليج',
-  template: '%s | Layl',
-},
-description:
-'مصنع ليل متخصص في تفصيل وتصنيع وتوريد اللانجيري والملابس النسائية بالجملة للمحلات والبوتيكات وتجار الجملة داخل مصر ودول الخليج.',
+    default:
+      'ليل | تفصيل وتوريد لانجيري جملة للمحلات والبوتيكات في مصر والخليج',
+    template: '%s | Layl',
+  },
+
+  description:
+    'مصنع ليل متخصص في تفصيل وتصنيع وتوريد اللانجيري والملابس النسائية بالجملة للمحلات والبوتيكات وتجار الجملة داخل مصر ودول الخليج.',
 
   keywords: [
     'مصنع لانجيري مصر',
@@ -44,18 +41,10 @@ description:
     'مصنع فساتين حريمي مصر',
     'مصنع ملابس نسائية',
     'مصنع ملابس نسائية في القاهرة',
-    'مصنع فساتين لانجيري',
-    'توريد ملابس B2B',
     'توريد لانجيري للخليج',
-    'لانجيري جملة السعودية',
-    'ملابس نسائية جملة الإمارات',
-    'تصدير ملابس نسائية للخليج',
     'B2B Lingerie Egypt',
     'Wholesale Lingerie Egypt',
-    'Egypt lingerie manufacturer',
-    'women wear manufacturer Egypt',
     'Layl Lingerie',
-    'ليل Layl',
     'مصنع ليل',
   ],
 
@@ -67,13 +56,6 @@ description:
   robots: {
     index: true,
     follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
-      'max-video-preview': -1,
-    },
   },
 
   alternates: {
@@ -88,7 +70,7 @@ description:
   openGraph: {
     title: 'ليل | تفصيل وتوريد لانجيري جملة للمحلات والبوتيكات',
     description:
-      'مصنع ليل لتوريد اللانجيري والملابس النسائية بالجملة داخل مصر ودول الخليج. جودة موثوقة، تصميمات عصرية، وأسعار تنافسية للتجار والمتاجر.',
+      'مصنع ليل لتوريد اللانجيري والملابس النسائية بالجملة داخل مصر ودول الخليج.',
     url: siteUrl,
     siteName: 'ليل - Layl',
     type: 'website',
@@ -98,22 +80,23 @@ description:
         url: ogImage,
         width: 1200,
         height: 630,
-        alt: 'ليل | تفصيل وتوريد لانجيري جملة للمحلات والبوتيكات',
+        alt: 'ليل | تفصيل وتوريد لانجيري جملة',
       },
     ],
   },
 
   twitter: {
     card: 'summary_large_image',
-    title: 'ليل | تفصيل وتوريد لانجيري جملة للمحلات والبوتيكات',
+    title: 'ليل | تفصيل وتوريد لانجيري جملة',
     description:
-      'توريد لانجيري وملابس نسائية جملة بخبرة أكثر من 20 عاماً للمتاجر وتجار الجملة داخل مصر والخليج.',
+      'توريد لانجيري وملابس نسائية جملة داخل مصر والخليج.',
     images: [ogImage],
   },
 
   icons: {
-    icon: '/favicon.ico',
-    apple: '/apple-touch-icon.png',
+    icon: '/icon.png',
+    shortcut: '/icon.png',
+    apple: '/icon.png',
   },
 
   category: 'fashion manufacturing',
@@ -130,14 +113,6 @@ export default function RootLayout({
     name: 'ليل',
     alternateName: 'Layl',
     url: siteUrl,
-    description:
-      'مصنع لانجيري وملابس نسائية راقية للتوريد B2B داخل مصر ودول الخليج.',
-    inLanguage: 'ar-EG',
-    potentialAction: {
-      '@type': 'SearchAction',
-      target: `${siteUrl}/catalog?search={search_term_string}`,
-      'query-input': 'required name=search_term_string',
-    },
   };
 
   const fashionBusinessSchema = {
@@ -146,31 +121,8 @@ export default function RootLayout({
     name: 'Layl Lingerie',
     alternateName: 'ليل',
     url: siteUrl,
-    logo: `${siteUrl}/images/logo.jpeg`,
+    logo: `${siteUrl}/icon.png`,
     image: ogImage,
-    description:
-      'مصنع ليل للانجيري والملابس النسائية في مصر، متخصص في توريد الجملة وحلول B2B للمتاجر والبوتيكات داخل مصر والخليج.',
-    telephone: '+201148871999',
-    email: 'info@layl-eg.com',
-    address: {
-      '@type': 'PostalAddress',
-      addressCountry: 'EG',
-      addressLocality: 'Cairo',
-    },
-    areaServed: ['EG', 'SA', 'AE', 'KW', 'QA', 'BH', 'OM'],
-    keywords: [
-      'مصنع لانجيري مصر',
-      'توريد لانجيري جملة',
-      'ملابس نسائية جملة',
-      'B2B Lingerie Egypt',
-      'Wholesale Lingerie Egypt',
-    ],
-    sameAs: [
-      'https://www.facebook.com/profile.php?id=61590401590088',
-      'https://www.instagram.com/layl2026iii/',
-      'https://t.me/Sarasoliman2810',
-      'https://www.tiktok.com/@layllayl182?is_from_webapp=1&sender_device=pc',
-    ],
   };
 
   return (
@@ -184,9 +136,7 @@ export default function RootLayout({
         <JsonLd data={fashionBusinessSchema} />
 
         <Header />
-
         {children}
-
         <Footer />
         <WhatsAppButton />
       </body>
