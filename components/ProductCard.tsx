@@ -24,8 +24,13 @@ export default function ProductCard({
   linkPrefix = '/catalog',
   locale = 'ar',
 }: ProductCardProps) {
-  const productImage =
-    product.imageUrl || product.gallery?.[0] || '/images/logo.jpeg';
+  const mainImage = product.gallery?.[0] || product.imageUrl || '/images/logo.jpeg';
+  const hoverImage = product.gallery?.[1];
+
+  const shortDescription =
+    product.description && product.description.length > 95
+      ? `${product.description.slice(0, 95)}...`
+      : product.description;
 
   const stockText =
     product.stockStatus === 'out_of_stock'
@@ -41,17 +46,23 @@ export default function ProductCard({
       : 'متاح';
 
   return (
-    <Link
-      className="productCard card hoverLift"
-      href={`${linkPrefix}/${product.slug}`}
-    >
+    <Link className="productCard card hoverLift" href={`${linkPrefix}/${product.slug}`}>
       <div className="productImageWrap">
         <img
-          src={productImage}
+          src={mainImage}
           alt={product.name}
-          className="productImage"
+          className="productImage primaryImage"
           loading="lazy"
         />
+
+        {hoverImage ? (
+          <img
+            src={hoverImage}
+            alt={product.name}
+            className="productImage secondaryImage"
+            loading="lazy"
+          />
+        ) : null}
       </div>
 
       <div className="productBody">
@@ -62,21 +73,25 @@ export default function ProductCard({
 
         <h3>{product.name}</h3>
 
-        {product.description ? <p>{product.description}</p> : null}
+        {shortDescription ? <p>{shortDescription}</p> : null}
 
-        <div className="chips">
-          {(product.selectedSizes || []).map((size) => (
-            <small key={size}>{size}</small>
-          ))}
-        </div>
+        {product.selectedSizes?.length ? (
+          <div className="chips">
+            {product.selectedSizes.slice(0, 5).map((size) => (
+              <small key={size}>{size}</small>
+            ))}
+          </div>
+        ) : null}
 
-        <div className="chips">
-          {(product.selectedColors || []).map((color) => (
-            <small key={color}>{color}</small>
-          ))}
-        </div>
+        {product.selectedColors?.length ? (
+          <div className="chips">
+            {product.selectedColors.slice(0, 4).map((color) => (
+              <small key={color}>{color}</small>
+            ))}
+          </div>
+        ) : null}
 
-        <div className="productMeta">
+        <div className="productFooter">
           <span>{product.price || (locale === 'en' ? 'Contact for price' : 'تواصل للطلب')}</span>
           <span>{stockText}</span>
         </div>
